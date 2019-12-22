@@ -174,5 +174,4 @@ public class PlayScreen extends BaseScreen {
         Vector2 dimensions = new Vector2(gCal.gridWidth / size.towWeight, gCal.gridHeight / size.towWeight);
         batch.draw(bigChika.getTexture(), pos.x, pos.y, dimensions.x, dimensions.y);
     }
-    // IGNORE
 }
