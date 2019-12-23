@@ -2,10 +2,7 @@ package rami.project.grey.core.gridsystem;
 
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.spawning.Spawner;
@@ -17,10 +14,10 @@ public final class GridManager implements Spawner.SpawningCallback {
 
     private Grid[][] map;
     // This is used to decrease processing
-    private HashMap<IEntity, Vector2> entities;
+    private LinkedList<Grid> occupiedGrids;
 
-    public HashMap<IEntity, Vector2> getEntities() {
-        return entities;
+    public LinkedList<Grid> getOccupiedGrids() {
+        return occupiedGrids;
     }
 
     // The reason columns and rows are not constants is to deal with the future expandability of the game
@@ -32,18 +29,18 @@ public final class GridManager implements Spawner.SpawningCallback {
         this.map = new Grid[columns][rows];
         for (int col = 0; col < columns; col++){
             for (int row = 0; row < rows; row++){
-                map[col][row] = new Grid(null);
+                map[col][row] = new Grid(col, row, null);
             }
         }
 
-        this.entities = new HashMap<>();
+        this.occupiedGrids = new LinkedList<>();
     }
 
     public void put(int locationX, int locationY, IEntity entity){
         map[locationX][locationY].currentResider = entity;
 
         if (entity != null)
-            entities.put(entity, new Vector2(locationX, locationX));
+            occupiedGrids.add(map[locationX][locationY]);
     }
 
     public IEntity at(int locationX, int locationY){
@@ -53,7 +50,7 @@ public final class GridManager implements Spawner.SpawningCallback {
     public void removeAt(int locationX, int locationY){
         Grid currentGrid = map[locationX][locationY];
         if (currentGrid.currentResider != null) {
-            entities.remove(currentGrid.currentResider);
+            occupiedGrids.remove(currentGrid);
             map[locationX][locationY].currentResider = null;
         }
     }
@@ -121,6 +118,6 @@ public final class GridManager implements Spawner.SpawningCallback {
     @Override
     public void spawnedAt(int gridX, int gridY, IEntity entity) {
         map[gridX][gridY].currentResider = entity;
-        entities.put(entity, new Vector2(gridX, gridY));
+        occupiedGrids.add(map[gridX][gridY]);
     }
 }

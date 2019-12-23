@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Map;
@@ -15,12 +14,12 @@ import rami.project.grey.Game;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
+import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.spawning.Spawner;
 import rami.project.grey.gameplay.PlayerController;
 import rami.project.grey.ui.util.PixelGridCalculator;
 
-// Test
 public class PlayScreen extends BaseScreen {
 
     // BASE VARIABLES
@@ -60,6 +59,10 @@ public class PlayScreen extends BaseScreen {
     private void initDrawables(){
         background = new ScreenBackground(game, this, batch);
 
+        // Hud
+        hud = new PlayerHud(gWidth, gHeight);
+        hud.showFps = true;
+
         bigChikaX = bigChikaY = 4;
         bigChika = new Sprite(game.res.getChika1(), gCal.gridWidth, gCal.gridHeight);
         Vector2 bigChikaCoords = gCal.getPixelPosFromGrid(bigChikaX, bigChikaY);
@@ -80,6 +83,7 @@ public class PlayScreen extends BaseScreen {
     /* ALL UNITS ARE IN GRID UNLESS SPECIFIED OTHERWISE */
     // UPDATING/DRAWING VARIABLES
     private ScreenBackground background;
+    PlayerHud hud;
 
     private Sprite bigChika;
     private int bigChikaX, bigChikaY;
@@ -92,10 +96,11 @@ public class PlayScreen extends BaseScreen {
     @Override
     public void update(float dt) {
         background.update(dt);
+        hud.update();
         controller.update(background.getSpeed(), background.getAcceleration());
         spawner.update();
 
-        log("Current score: " + controller.getScore());
+        log("No. spawned: " + gManager.getOccupiedGrids().size());
 
         camera.update();
     }
@@ -103,19 +108,20 @@ public class PlayScreen extends BaseScreen {
     @Override
     public void draw(float dt) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        log(Gdx.graphics.getFramesPerSecond());
 
         batch.begin();
         background.draw();
         bigChika.draw(batch);
 
-        for (Map.Entry<IEntity, Vector2> entry: gManager.getEntities().entrySet()){
-            Vector2 pixels = gCal.getPixelPosFromGrid((int) entry.getValue().x, (int) entry.getValue().y);
-            drawEntity(entry.getKey(), pixels);
+        for (Grid grid: gManager.getOccupiedGrids()){
+            Vector2 pixels = gCal.getPixelPosFromGrid(grid.x, grid.y);
+            drawEntity(grid.currentResider, pixels);
         }
 
+        // Must be last because it is on top
+        hud.draw(batch, controller.getScore(), Gdx.graphics.getFramesPerSecond());
         batch.end();
-
-
     }
 
     @Override
@@ -143,6 +149,9 @@ public class PlayScreen extends BaseScreen {
                 break;
             case Input.Keys.SPACE:
                 background.toggleStop(false);
+                break;
+            case Input.Keys.F:
+                hud.showFps = !hud.showFps;
                 break;
         }
 
@@ -175,5 +184,4 @@ public class PlayScreen extends BaseScreen {
         Vector2 dimensions = new Vector2(gCal.gridWidth / size.towWeight, gCal.gridHeight / size.towWeight);
         batch.draw(bigChika.getTexture(), pos.x, pos.y, dimensions.x, dimensions.y);
     }
-    // PROD BRANCH
 }

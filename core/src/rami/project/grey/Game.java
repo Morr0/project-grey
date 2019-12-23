@@ -18,6 +18,9 @@ import rami.project.grey.ui.screens.SplashScreen;
 * */
 
 public class Game extends ApplicationAdapter {
+	// CONSTANTS
+	public static final String GAME_VERSION = "0.1";
+
 	private BaseScreen currentScreen;
 
 	public ResourcesManager res;
