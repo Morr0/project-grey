@@ -1,10 +1,9 @@
 package rami.project.grey.core.gridsystem;
 
-import com.badlogic.gdx.math.Vector2;
-
 import java.util.*;
 
 import rami.project.grey.core.entity.IEntity;
+import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.spawning.Spawner;
 
 // TODO a certain IEntity must only touch one grid at a single time
@@ -16,8 +15,21 @@ public final class GridManager implements Spawner.SpawningCallback {
     // This is used to decrease processing
     private LinkedList<Grid> occupiedGrids;
 
+    // Records player's
+    private LinkedList<Grid> players;
+
+    // Level skipping and stuff
+    private boolean skippedLevel = false;
+
+    // Subscribers
+    private ArrayList<GridSubscriber> subscribers;
+
     public LinkedList<Grid> getOccupiedGrids() {
         return occupiedGrids;
+    }
+
+    public LinkedList<Grid> getPlayers() {
+        return players;
     }
 
     // The reason columns and rows are not constants is to deal with the future expandability of the game
@@ -34,6 +46,13 @@ public final class GridManager implements Spawner.SpawningCallback {
         }
 
         this.occupiedGrids = new LinkedList<>();
+        this.players = new LinkedList<>();
+
+        this.subscribers = new ArrayList<>(2);
+    }
+
+    public void addSubscriber(GridSubscriber sub){
+        this.subscribers.add(sub);
     }
 
     public void put(int locationX, int locationY, IEntity entity){
@@ -59,6 +78,19 @@ public final class GridManager implements Spawner.SpawningCallback {
         return map[locationX][locationY].currentResider == null;
     }
 
+    public void setPlayerAt(int locationX, int locationY, IEntity entity){
+        map[locationX][locationY].currentResider = entity;
+        players.add(map[locationX][locationY]);
+    }
+
+    // Updating per frame
+    public void update(){
+        if (skippedLevel){
+            occupiedGrids.clear();
+            // TODO implement skipping later
+        }
+    }
+
     // RELOCATION
     // These will take care of recycling grids and moving them up and down depending on what is going on
 
@@ -69,33 +101,42 @@ public final class GridManager implements Spawner.SpawningCallback {
      * @param oldY           Old Grid Y
      * @param offsetX        By how much to move in X. Can be negative.
      * @param offsetY        By how much to move in Y. Can be negative.
-     * @param fireCallbacks  Whether to let the method call callbacks to existing IEntitys in the desired location.
-     *
-     * @return               When fireCallbacks is false, this will be a reference to the IEntity that resided in it's original location before it was taken over.
      * */
-    public IEntity moveTo(int oldX, int oldY, int offsetX, int offsetY, boolean fireCallbacks){
-        // This is all assuming that at oldPos there exists an IEntity
-        Grid oldPos = map[oldX][oldY];
-        Grid newPos = map[oldX + offsetX][oldY + offsetY];
-        Grid takenOverPos = null;
-
-        if (newPos.currentResider == null){ // If the desired location is empty
-            newPos.currentResider = oldPos.currentResider;
-        } else { // If the desired location is not empty
-            if (fireCallbacks)
-                newPos.currentResider.walkedIn(oldPos.currentResider);
-            else
-                takenOverPos = newPos;
-
-            newPos = oldPos;
+    public void moveTo(int oldX, int oldY, int offsetX, int offsetY){
+        // Restricts going sideways off the screen
+        int desiredX = (oldX + offsetX) >= columns? columns - 1: oldX + offsetX;
+        // Allows to jump out of the level
+        int desiredY = oldY + offsetY;
+        if (desiredY > rows - 1 || desiredY - 1 <= 0) {
+            desiredY = 0;
+            skippedLevel = true;
         }
 
-        // Since in both cases the OLD position will be empty
-        map[oldX][oldY].currentResider = null;
-        map[oldX + offsetX][oldY + offsetY] = newPos;
-        // The previous 2 lines are to update the array
+        Grid oldPos = map[oldX][oldY];
+        Grid newPos = map[desiredX][desiredY];
 
-        return takenOverPos == null? null: takenOverPos.currentResider;
+        // For WalkedIn event
+        if (newPos.currentResider != null)
+            newPos.currentResider.walkedIn(oldPos.currentResider);
+
+        // For WalkedInBehind event
+        try {
+            if (!skippedLevel && map[desiredX][desiredY + 1].currentResider != null)
+                map[desiredX][desiredY + 1].currentResider.walkedInBehind(oldPos.currentResider);
+        } catch (ArrayIndexOutOfBoundsException ex){}
+
+        // The actual moving
+        map[desiredX][desiredY].currentResider = map[oldX][oldY].currentResider;
+        map[oldX][oldY].currentResider = null;
+
+        // Notifying subscribers
+        if (map[desiredX][desiredY].currentResider instanceof BigChika)
+            notifySubscribers(map[desiredX][desiredY].currentResider, desiredX, desiredY);
+    }
+
+    private void notifySubscribers(IEntity player, int newGridX, int newGridY){
+        for (GridSubscriber subscriber: subscribers)
+            subscriber.playerPosChanged(newGridX, newGridY);
     }
 
     // INTERACTION callbacks that entities implement to know if something happened

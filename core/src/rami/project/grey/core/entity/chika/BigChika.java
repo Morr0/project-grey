@@ -4,6 +4,11 @@ import java.util.Stack;
 
 public class BigChika extends Chika {
 
+    @Override
+    public boolean isPlayable() {
+        return true;
+    }
+
     // Towing properties:
     public static final byte DEFAULT_MAX_TOWS = 2;
     private byte maxTows = DEFAULT_MAX_TOWS;
@@ -17,6 +22,18 @@ public class BigChika extends Chika {
         towes = new Stack<>();
     }
 
+    public void setMaxTows(byte maxTows){
+        this.maxTows = maxTows;
+    }
+
+    public int getNoTows(){
+        return towes.size();
+    }
+
+    public Stack<Chika> getTowes() {
+        return towes;
+    }
+
     private boolean hasTowes(){
         return isTowed;
     }
@@ -26,13 +43,15 @@ public class BigChika extends Chika {
         // The front tower maybe BigChika itself if none other is towed
 
         if (!isTowed){
+            child.hasParent = true;
             towes.push(child);
             isTowed = true;
         } else {
             if (towes.size() < maxTows){
-                if (canBeTowen(child))
+                if (canBeTowen(child)){
+                    child.hasParent = true;
                     towes.push(child);
-                else
+                } else
                     unsuccesfulTow(child);
             }
         }
@@ -41,6 +60,7 @@ public class BigChika extends Chika {
     public void untow(){
         // Untows the first Chika into the front
         if (isTowed){
+            towes.peek().hasParent = false;
             towes.pop();
             if (towes.size() == 0)
                 isTowed = false;

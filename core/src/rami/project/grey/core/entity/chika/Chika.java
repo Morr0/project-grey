@@ -6,6 +6,9 @@ import rami.project.grey.core.entity.ILiveable;
 // The good entity that the player controls
 public class Chika implements IEntity, ILiveable {
 
+    public boolean hasParent = false;
+    BigChika parent = null;
+
     public enum ChikaSize{ // TODO handle translation
         XSMALL((byte) 1, "Nene"),
         SMALL((byte) 2, "Nunu"),
@@ -39,6 +42,11 @@ public class Chika implements IEntity, ILiveable {
     @Override
     public String getName() {
         return size.name;
+    }
+
+    @Override
+    public boolean isPlayable() {
+        return false;
     }
 
     // ILiveable
@@ -76,5 +84,13 @@ public class Chika implements IEntity, ILiveable {
     @Override
     public void walkedIn(IEntity walker) {
 
+    }
+
+    @Override
+    public void walkedInBehind(IEntity walker) {
+        if (walker instanceof BigChika){
+            BigChika bigChika = (BigChika) walker;
+            bigChika.tow(this);
+        }
     }
 }

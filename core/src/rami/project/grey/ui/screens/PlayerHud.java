@@ -10,7 +10,7 @@ public final class PlayerHud {
     private int gWidth, gHeight;
 
     // Every how many frames to update the hud
-    byte FRAMES_TO_UPDATE = 5;
+    byte FRAMES_TO_UPDATE = 2;
     private byte updateRate = FRAMES_TO_UPDATE;
 
     // FPS

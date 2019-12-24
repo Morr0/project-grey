@@ -4,11 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-
-import java.util.Map;
 
 import rami.project.grey.Game;
 import rami.project.grey.core.entity.IEntity;
@@ -62,17 +59,12 @@ public class PlayScreen extends BaseScreen {
         // Hud
         hud = new PlayerHud(gWidth, gHeight);
         hud.showFps = true;
-
-        bigChikaX = bigChikaY = 4;
-        bigChika = new Sprite(game.res.getChika1(), gCal.gridWidth, gCal.gridHeight);
-        Vector2 bigChikaCoords = gCal.getPixelPosFromGrid(bigChikaX, bigChikaY);
-        bigChika.setPosition(bigChikaCoords.x, bigChikaCoords.y);
     }
 
     private void initControllers(){
         // Player controller
         playerView = new BigChika();
-        controller = new PlayerController(playerView);
+        controller = new PlayerController(playerView, gridColumns, gridRows, gManager);
 
         // Spawning
         spawner = new Spawner(gManager, gridColumns, gridRows, controller.getMaximumAllowableSpawns());
@@ -84,9 +76,6 @@ public class PlayScreen extends BaseScreen {
     // UPDATING/DRAWING VARIABLES
     private ScreenBackground background;
     PlayerHud hud;
-
-    private Sprite bigChika;
-    private int bigChikaX, bigChikaY;
 
     // Gameplay variables
     private PlayerController controller;
@@ -100,7 +89,7 @@ public class PlayScreen extends BaseScreen {
         controller.update(background.getSpeed(), background.getAcceleration());
         spawner.update();
 
-        log("No. spawned: " + gManager.getOccupiedGrids().size());
+//        log("Player's pos: (" + gManager.getPlayers().getFirst().x + " , " + gManager.getPlayers().getFirst().y);
 
         camera.update();
     }
@@ -108,16 +97,16 @@ public class PlayScreen extends BaseScreen {
     @Override
     public void draw(float dt) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        log(Gdx.graphics.getFramesPerSecond());
 
         batch.begin();
         background.draw();
-        bigChika.draw(batch);
 
         for (Grid grid: gManager.getOccupiedGrids()){
             Vector2 pixels = gCal.getPixelPosFromGrid(grid.x, grid.y);
             drawEntity(grid.currentResider, pixels);
         }
+
+        drawBigChika();
 
         // Must be last because it is on top
         hud.draw(batch, controller.getScore(), Gdx.graphics.getFramesPerSecond());
@@ -142,10 +131,16 @@ public class PlayScreen extends BaseScreen {
     public boolean keyDown(int keycode) {
         switch (keycode){
             case Input.Keys.UP:
-
+                    controller.moveUp();
                 break;
             case Input.Keys.DOWN:
-
+                    controller.moveDown();
+                break;
+            case Input.Keys.RIGHT:
+                    controller.moveRight();
+                break;
+            case Input.Keys.LEFT:
+                    controller.moveLeft();
                 break;
             case Input.Keys.SPACE:
                 background.toggleStop(false);
@@ -179,9 +174,24 @@ public class PlayScreen extends BaseScreen {
             drawChika((Chika) entity, pos);
     }
 
-    private void drawChika(Chika entity, Vector2 pos){
-        Chika.ChikaSize size = entity.getSize();
-        Vector2 dimensions = new Vector2(gCal.gridWidth / size.towWeight, gCal.gridHeight / size.towWeight);
-        batch.draw(bigChika.getTexture(), pos.x, pos.y, dimensions.x, dimensions.y);
+    // This relays all attached towes to not be drawn by this but from the parent
+    private void drawChika(Chika chika, Vector2 pos){
+        if (!chika.hasParent){
+            Chika.ChikaSize size = chika.getSize();
+            Vector2 dimensions = new Vector2(gCal.gridWidth / size.towWeight, gCal.gridHeight / size.towWeight);
+            batch.draw(game.res.getChika1(), pos.x, pos.y, dimensions.x, dimensions.y);
+        }
+    }
+
+    // This draws the big chika and all towed chikas
+    private void drawBigChika(){
+        // Drawing the BigChika first
+        Vector2 pixels = gCal.getPixelPosFromGrid((int) controller.gridPos.x, (int) controller.gridPos.y);
+        batch.draw(game.res.getBigChika(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
+
+        // Drawing the towed ones
+//        for (int i = 1; i <= playerView.getNoTows(); i++){
+//            batch.draw(game.res.getTowedChika(), pixels.x, pixels.y + (i * gCal.gridHeight));
+//        }
     }
 }

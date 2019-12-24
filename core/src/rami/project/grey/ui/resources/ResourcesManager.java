@@ -34,6 +34,10 @@ public final class ResourcesManager {
         return textures.get("Background");
     }
 
+    public Texture getBigChika() { return textures.get("Chika1-1"); }
+
+    public Texture getTowedChika() { return textures.get("Chika1-1"); }
+
     public Texture getChika1(){
         return textures.get("Chika1-1");
     }

@@ -11,6 +11,8 @@ public interface IEntity {
      * */
     String getName();
 
+    boolean isPlayable();
+
     // INTERACTION CALLBACKS
     /**
      * Describes an IEntity (maybe a player) touches a particular grid on the screen (e.g. by mouse/finger)
@@ -21,4 +23,9 @@ public interface IEntity {
      * Describes an IEntity have moved into a specific grid (i.e. walked on it)
      * */
     void walkedIn(IEntity walker);
+
+    /**
+     * Describes an IEntity walked and is currently behind the called entity
+     * */
+    void walkedInBehind(IEntity walker);
 }
