@@ -144,4 +144,9 @@ public final class Spawner implements GridSubscriber {
     public void playerPosChanged(int newGridX, int newGridY) {
 
     }
+
+    @Override
+    public void jumpedLevel() {
+
+    }
 }

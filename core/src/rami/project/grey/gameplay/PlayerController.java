@@ -5,14 +5,18 @@ import com.badlogic.gdx.math.Vector2;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
+import rami.project.grey.ui.screens.PlayerHud;
+import rami.project.grey.ui.screens.ScreenBackground;
 
 /**
  * Is what controls the player where it coordinates between the logic and view of the game so each thing can do its own.
- * This class THINKS that the player actually moves.
+ * This class is what controls every movable thing on the screen.
  * */
 public final class PlayerController implements GridSubscriber {
+    private ScreenBackground background;
+    private PlayerHud hud;
     private Player player;
-    private BigChika view;
+    public BigChika view;
     private GridManager gridManager;
 
     // CONSTANTS
@@ -33,9 +37,11 @@ public final class PlayerController implements GridSubscriber {
     // Coords
     public Vector2 gridPos;
 
-    public PlayerController(BigChika view, int gridColumns, int gridRows, GridManager gridManager){
+    public PlayerController(ScreenBackground background, PlayerHud hud, int gridColumns, int gridRows, GridManager gridManager){
+        this.background = background;
+        this.hud = hud;
         this.player = new Player();
-        this.view = view;
+        this.view = new BigChika(player.maxAllowableTowes());
 
         this.gridManager = gridManager;
         this.gridManager.setPlayerAt(gridColumns / 2, gridColumns / 2, view);
@@ -45,7 +51,8 @@ public final class PlayerController implements GridSubscriber {
         this.gridManager.addSubscriber(this);
     }
 
-    public void update(float speed, float acceleration){
+    public void update(float dt, float speed, float acceleration){
+        background.update(dt);
 
         if (speed == 0 && acceleration == 0)
             stopped = true;
@@ -62,6 +69,9 @@ public final class PlayerController implements GridSubscriber {
         }
 
         score += scoreGain;
+
+        // Leave it till last
+        hud.update(dt);
     }
 
     // TODO configure this so as the game lasts more the more able to spawn
@@ -92,5 +102,10 @@ public final class PlayerController implements GridSubscriber {
     public void playerPosChanged(int newGridX, int newGridY) {
         gridPos.x = newGridX;
         gridPos.y = newGridY;
+    }
+
+    @Override
+    public void jumpedLevel() {
+
     }
 }

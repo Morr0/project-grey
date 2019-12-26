@@ -33,4 +33,8 @@ public final class Player {
         currentCash += offset;
         prefs.putFloat(NameRegistery.PPLAYER_CASH, currentCash);
     }
+
+    byte maxAllowableTowes(){
+        return 2;
+    }
 }

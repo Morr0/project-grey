@@ -1,5 +1,7 @@
 package rami.project.grey.core.entity.chika;
 
+import com.badlogic.gdx.Gdx;
+
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.ILiveable;
 

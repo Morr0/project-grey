@@ -12,7 +12,7 @@ import rami.project.grey.Game;
  */
 
 // TODO implement acceleration
-final class ScreenBackground {
+public final class ScreenBackground {
     private Game game;
     private BaseScreen screen;
     private Texture background;
@@ -42,7 +42,7 @@ final class ScreenBackground {
         height2 = background.getHeight();
     }
 
-    void update(float dt){
+    public void update(float dt){
         float decrementBy =  dt * currentSpeed;
         height1 = height1 - decrementBy;
         height2 = height2 - decrementBy;

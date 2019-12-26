@@ -110,17 +110,19 @@ public final class GridManager implements Spawner.SpawningCallback {
             desiredX = columns - 1;
         else if (desiredX < 0)
             desiredX = 0;
-        // Allows to jump out of the level
+
+        // Allows to jump out of the level upwards but not downwards
         int desiredY = oldY + offsetY;
         if (desiredY < 0)
-            desiredY = rows - 1;
+            desiredY = 0;
         else if (desiredY >= rows){
             desiredY = 0;
             skippedLevel = true;
         }
 
         // So that entities do not get stuck that way
-        if (oldX == desiredX)
+        // DONT CHANGE IT UNLESS YOU KNOW HOW IT WORKS BECAUSE IT JUST WORKS
+        if (oldX == desiredX && oldY == desiredY)
             return;
 
         Grid oldPos = map[oldX][oldY];
@@ -134,8 +136,7 @@ public final class GridManager implements Spawner.SpawningCallback {
         try {
             if (!skippedLevel && map[desiredX][desiredY + 1].currentResider != null)
                 map[desiredX][desiredY + 1].currentResider.walkedInBehind(oldPos.currentResider);
-        } catch (ArrayIndexOutOfBoundsException ex){Gdx.app.log("Game", "exception area");}
-        Gdx.app.log("Game", "After exception area");
+        } catch (ArrayIndexOutOfBoundsException ex){Gdx.app.log("Game", " Exception");}
 
         // The actual moving
         map[desiredX][desiredY].currentResider = map[oldX][oldY].currentResider;
@@ -151,22 +152,7 @@ public final class GridManager implements Spawner.SpawningCallback {
             subscriber.playerPosChanged(newGridX, newGridY);
     }
 
-    // INTERACTION callbacks that entities implement to know if something happened
-
-    // Touch event
-    public void touchAt(int locationX, int locationY, IEntity toucher){
-        if (map[locationX][locationY].currentResider != null)
-            map[locationX][locationY].currentResider.touched(toucher);
-    }
-
-    // Movement event
-    public void walkedAt(int locationX, int locationY, IEntity walker){
-        if (map[locationX][locationY].currentResider != null)
-            map[locationX][locationY].currentResider.touched(walker);
-    }
-
     // CALLBACK
-
 
     @Override
     public void spawnedAt(int gridX, int gridY, IEntity entity) {

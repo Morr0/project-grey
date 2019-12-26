@@ -1,5 +1,7 @@
 package rami.project.grey.core.entity.chika;
 
+import com.badlogic.gdx.Gdx;
+
 import java.util.Stack;
 
 public class BigChika extends Chika {
@@ -10,14 +12,14 @@ public class BigChika extends Chika {
     }
 
     // Towing properties:
-    public static final byte DEFAULT_MAX_TOWS = 2;
-    private byte maxTows = DEFAULT_MAX_TOWS;
+    private byte maxTows;
     // -Can only tow and untow from the front
     private boolean isTowed;
     private Stack<Chika> towes;
 
-    public BigChika() {
+    public BigChika(byte maxAllowableTowes) {
         super(ChikaSize.XLARGE);
+        this.maxTows = maxAllowableTowes;
 
         towes = new Stack<>();
     }
@@ -38,21 +40,23 @@ public class BigChika extends Chika {
         return isTowed;
     }
 
-    public void tow(Chika child){
+    void tow(Chika child){
         // Only same or smaller size of the front tower can be towed
         // The front tower maybe BigChika itself if none other is towed
 
-        if (!isTowed){
+        if (!isTowed){ // First tow doesnt care about size of new tow
             child.hasParent = true;
+            child.parent = this;
             towes.push(child);
             isTowed = true;
         } else {
             if (towes.size() < maxTows){
                 if (canBeTowen(child)){
                     child.hasParent = true;
+                    child.parent = this;
                     towes.push(child);
                 } else
-                    unsuccesfulTow(child);
+                    unsuccessfulTow(child, TowingReason.LIMITED_CAPACITY);
             }
         }
     }
@@ -72,11 +76,12 @@ public class BigChika extends Chika {
         if (towes.peek().getSize().towWeight >= potentialChild.getSize().towWeight)
             return true;
 
+        unsuccessfulTow(potentialChild, TowingReason.BIG_SIZE);
         return false;
     }
 
     // This must be called whenever a tow couldn't occur
-    private void unsuccesfulTow(Chika failedApplicant){
-
+    private void unsuccessfulTow(Chika failedApplicant, TowingReason reason){
+        Gdx.app.log("Game", "Unsuccessful tow due to " + reason.toString());
     }
 }

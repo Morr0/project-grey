@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.Game;
 import rami.project.grey.core.entity.IEntity;
-import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
@@ -63,14 +62,11 @@ public class PlayScreen extends BaseScreen {
 
     private void initControllers(){
         // Player controller
-        playerView = new BigChika();
-        controller = new PlayerController(playerView, gridColumns, gridRows, gManager);
+        controller = new PlayerController(background, hud, gridColumns, gridRows, gManager);
 
         // Spawning
         spawner = new Spawner(gManager, gridColumns, gridRows, controller.getMaximumAllowableSpawns());
     }
-
-    private BigChika playerView;
 
     /* ALL UNITS ARE IN GRID UNLESS SPECIFIED OTHERWISE */
     // UPDATING/DRAWING VARIABLES
@@ -84,13 +80,12 @@ public class PlayScreen extends BaseScreen {
 
     @Override
     public void update(float dt) {
-        background.update(dt);
-        hud.update();
-        controller.update(background.getSpeed(), background.getAcceleration());
+        controller.update(dt, background.getSpeed(), background.getAcceleration());
         spawner.update();
 
-//        log("Player's pos: (" + gManager.getPlayers().getFirst().x + " , " + gManager.getPlayers().getFirst().y);
+//        log("Tows: " + controller.view.getNoTows());
 
+        // KEEP LAST
         camera.update();
     }
 

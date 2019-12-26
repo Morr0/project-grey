@@ -45,7 +45,7 @@ public final class PlayerHud {
         scorePos.y = propsY * 19;
     }
 
-    void update(){
+    public void update(float dt){
         // Update controlling logic
         if (updateRate == (byte) 5)
             updateRate = 0;
