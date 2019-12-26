@@ -2,6 +2,7 @@ package rami.project.grey.core.gridsystem;
 
 import java.util.*;
 
+import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.spawning.Spawner;
@@ -104,13 +105,23 @@ public final class GridManager implements Spawner.SpawningCallback {
      * */
     public void moveTo(int oldX, int oldY, int offsetX, int offsetY){
         // Restricts going sideways off the screen
-        int desiredX = (oldX + offsetX) >= columns? columns - 1: oldX + offsetX;
+        int desiredX = oldX + offsetX;
+        if (desiredX >= columns)
+            desiredX = columns - 1;
+        else if (desiredX < 0)
+            desiredX = 0;
         // Allows to jump out of the level
         int desiredY = oldY + offsetY;
-        if (desiredY > rows - 1 || desiredY - 1 <= 0) {
+        if (desiredY < 0)
+            desiredY = rows - 1;
+        else if (desiredY >= rows){
             desiredY = 0;
             skippedLevel = true;
         }
+
+        // So that entities do not get stuck that way
+        if (oldX == desiredX)
+            return;
 
         Grid oldPos = map[oldX][oldY];
         Grid newPos = map[desiredX][desiredY];
@@ -123,7 +134,8 @@ public final class GridManager implements Spawner.SpawningCallback {
         try {
             if (!skippedLevel && map[desiredX][desiredY + 1].currentResider != null)
                 map[desiredX][desiredY + 1].currentResider.walkedInBehind(oldPos.currentResider);
-        } catch (ArrayIndexOutOfBoundsException ex){}
+        } catch (ArrayIndexOutOfBoundsException ex){Gdx.app.log("Game", "exception area");}
+        Gdx.app.log("Game", "After exception area");
 
         // The actual moving
         map[desiredX][desiredY].currentResider = map[oldX][oldY].currentResider;

@@ -8,8 +8,9 @@ import java.util.Random;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.gridsystem.GridManager;
+import rami.project.grey.core.gridsystem.GridSubscriber;
 
-public final class Spawner {
+public final class Spawner implements GridSubscriber {
     private GridManager gridManager;
     private int gridColumns, gridRows;
     private LinkedList<Vector2> reservedGrids;
@@ -34,6 +35,7 @@ public final class Spawner {
 
     public Spawner(GridManager gridManager, int gridColumns, int gridRows, int maxAllowableSpawns) {
         this.gridManager = gridManager;
+        this.gridManager.addSubscriber(this);
         this.gridColumns = gridColumns;
         this.gridRows = gridRows;
 
@@ -136,4 +138,10 @@ public final class Spawner {
         void spawnedAt(int gridX, int gridY, IEntity entity);
     }
 
+    // GRID SUBSCRIBER
+
+    @Override
+    public void playerPosChanged(int newGridX, int newGridY) {
+
+    }
 }
