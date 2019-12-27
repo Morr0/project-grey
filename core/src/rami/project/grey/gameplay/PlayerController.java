@@ -2,11 +2,14 @@ package rami.project.grey.gameplay;
 
 import com.badlogic.gdx.math.Vector2;
 
+import rami.project.grey.Game;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.ui.screens.PlayerHud;
 import rami.project.grey.ui.screens.ScreenBackground;
+
+import java.util.Random;
 
 /**
  * Is what controls the player where it coordinates between the logic and view of the game so each thing can do its own.
@@ -24,22 +27,31 @@ public final class PlayerController implements GridSubscriber {
     public static final float NON_CONSTANT_MOTION_SCORE_RATE = 1.56f;
     public static final float STOPPED_SCORE_RATE = -0.86f;
 
-    // MOTION
-    private float currentSpeed = 100f;
-    private float currentAccel = 1f;
+    private static final float INITIAL_STARTING_VELOCITY = 125f;
+    private static final float INITIAL_STARTING_DECELERATION = 4.3f;
 
-    private float targetSpeed = 0f;
-    private float previousAcceleration = 0f;
+    //
+    private float difficultyAccumulator = 0.0001f;
+
+    // MOTION
+    private float currentSpeed;
+    private float currentAccel;
+    private int accelerationFactor = 1;
+    // In seconds
+    private int accelerationTime;
 
     // Properties of a game
     private float scoreGain = 0;
     private float score = 0;
 
+    // UTIL
+    private Random rand = new Random();
+
 
     public float getScore() { return score; }
 
     // States
-    private boolean stopped;
+    private boolean stopped = false;
 
     // Coords
     public Vector2 gridPos;
@@ -56,45 +68,43 @@ public final class PlayerController implements GridSubscriber {
         this.gridPos = new Vector2(gridColumns / 2, gridRows / 2);
 
         this.gridManager.addSubscriber(this);
+
+        // Defaults
+        this.currentSpeed = INITIAL_STARTING_VELOCITY;
+        this.currentAccel = INITIAL_STARTING_DECELERATION;
+        this.accelerationTime = 5;
+    }
+
+    public void applyAcceleration(int accelerationFactor){
+        this.accelerationFactor = accelerationFactor;
+        accelerationTime = 5;
     }
 
     public void update(float dt){
-        if (stopped){
-            // Reaccelerate
+        if (accelerationTime > 0)
+            currentSpeed += currentAccel * difficultyAccumulator
+                    * accelerationFactor * accelerationTime * dt;
+        accelerationTime--;
 
-            stopped = false;
-        } else {
-            stopped = true;
-        }
+        // Difficulty regulation --- START
+        difficultyAccumulator += 0.0001f;
+        difficultyAccumulator /= rand.nextInt(20) == 10? 2: 1;
+        // Difficulty regulation --- END
 
-        // Limit acceleration when reached target speed
-        if (currentSpeed == targetSpeed)
-            currentAccel = 0;
+        // Score regulation  --- BEGIN ---
 
-
-        if (currentSpeed == 0 && currentAccel == 0)
-            stopped = true;
-        else if (currentSpeed != 0)
-            stopped = false;
-
-        if (stopped)
-            scoreGain = STOPPED_SCORE_RATE;
-        else {
-            if (currentAccel == 0){
-                scoreGain = CONSTANT_MOTION_SCORE_RATE;
-            } else
-                scoreGain = NON_CONSTANT_MOTION_SCORE_RATE;
-        }
+        // Applying multipliers
+        scoreGain = stopped? STOPPED_SCORE_RATE: 1;
+        scoreGain *= dt;
+        scoreGain *= (float) (view.getTotalHealth()/view.getCurrentHealth());
+        scoreGain /= view.getNoTows() * view.getCurrentHealth() + 1;
 
         score += scoreGain;
+        // Score regulation  --- END ---
 
         // Leave it till last
         bg.update(dt, currentSpeed);
         hud.update(dt);
-    }
-
-    private void accelerateToAndReach(){
-
     }
 
     // TODO configure this so as the game lasts more the more able to spawn
@@ -121,6 +131,9 @@ public final class PlayerController implements GridSubscriber {
 
     public void toggleStop(){
         stopped = !stopped;
+        currentAccel *= stopped? -1: 1;
+        accelerationTime = 5;
+//        accelerationFactor = stopped? 75000: 100000;
     }
 
     // GRID SUBSCRIBER

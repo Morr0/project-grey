@@ -17,6 +17,9 @@ public class BigChika extends Chika {
     private boolean isTowed;
     private Stack<Chika> towes;
 
+    // Attachments
+    byte usedAttachments = 0;
+
     public BigChika(byte maxAllowableTowes) {
         super(ChikaSize.XLARGE);
         this.maxTows = maxAllowableTowes;
@@ -59,15 +62,22 @@ public class BigChika extends Chika {
                     unsuccessfulTow(child, TowingReason.LIMITED_CAPACITY);
             }
         }
+
+        // To update
+        if (child.hasParent)
+            updateTotalHealth();
     }
 
     public void untow(){
         // Untows the first Chika into the front
         if (isTowed){
             towes.peek().hasParent = false;
+            towes.peek().parent = null;
             towes.pop();
             if (towes.size() == 0)
                 isTowed = false;
+
+            updateTotalHealth();
         }
     }
 
@@ -83,5 +93,14 @@ public class BigChika extends Chika {
     // This must be called whenever a tow couldn't occur
     private void unsuccessfulTow(Chika failedApplicant, TowingReason reason){
         Gdx.app.log("Game", "Unsuccessful tow due to " + reason.toString());
+    }
+
+    private void updateTotalHealth(){
+        totalHealth = (short) (BASE_HEALTH * size.towWeight);
+        totalHealth *= (short) ((3 * getNoTows()/2) * BASE_HEALTH/(usedAttachments + 1));
+
+        // To make sure no extra health exists
+        if (currentHealth > totalHealth)
+            currentHealth = totalHealth;
     }
 }

@@ -8,6 +8,8 @@ import rami.project.grey.core.entity.ILiveable;
 // The good entity that the player controls
 public class Chika implements IEntity, ILiveable {
 
+    protected byte BASE_HEALTH = 4;
+
     public boolean hasParent = false;
     BigChika parent = null;
 
@@ -29,10 +31,13 @@ public class Chika implements IEntity, ILiveable {
     }
 
     // Size is set once
-    private ChikaSize size;
+    protected ChikaSize size;
 
     public Chika(ChikaSize size){
         this.size = size;
+
+        this.totalHealth = (short) (BASE_HEALTH * size.towWeight);
+        this.currentHealth = totalHealth;
     }
 
     public ChikaSize getSize(){
@@ -52,23 +57,12 @@ public class Chika implements IEntity, ILiveable {
     }
 
     // ILiveable
+    protected short totalHealth;
     protected short currentHealth;
 
     @Override
     public short getTotalHealth() {
-        switch (size){
-            case XSMALL:
-                return 4;
-            case SMALL:
-                return 6;
-            case MEDIUM:
-                return 8;
-            case LARGE:
-                return 12;
-            case XLARGE:
-                return 16;
-        }
-        return 0;
+        return totalHealth;
     }
 
     @Override
