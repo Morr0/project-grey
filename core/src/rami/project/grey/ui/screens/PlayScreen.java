@@ -80,7 +80,7 @@ public class PlayScreen extends BaseScreen {
 
     @Override
     public void update(float dt) {
-        controller.update(dt, background.getSpeed(), background.getAcceleration());
+        controller.update(dt);
         spawner.update();
 
 //        log("Tows: " + controller.view.getNoTows());
@@ -138,7 +138,7 @@ public class PlayScreen extends BaseScreen {
                     controller.moveLeft();
                 break;
             case Input.Keys.SPACE:
-                background.toggleStop(false);
+                controller.toggleStop();
                 break;
             case Input.Keys.F:
                 hud.showFps = !hud.showFps;

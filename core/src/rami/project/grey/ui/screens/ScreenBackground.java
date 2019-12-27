@@ -22,10 +22,8 @@ public final class ScreenBackground {
     public static final int INITIAL_SPEED = 100;
 
     // MOTION , only moves vertically
+    // INTERNAL
     private float height1, height2;
-    private float currentSpeed = 100;
-    private float acceleration = 0;
-
 
     ScreenBackground(Game game, BaseScreen screen, SpriteBatch batch) {
         this.game = game;
@@ -42,7 +40,11 @@ public final class ScreenBackground {
         height2 = background.getHeight();
     }
 
-    public void update(float dt){
+    /**
+     * Internal updating only. i.e. doing it's job
+     * */
+    public void update(float dt, float currentSpeed){
+        // INTERNAL UPDATING ONLY
         float decrementBy =  dt * currentSpeed;
         height1 = height1 - decrementBy;
         height2 = height2 - decrementBy;
@@ -59,27 +61,6 @@ public final class ScreenBackground {
     void draw(){
         batch.draw(background, 0, height1, screen.gWidth, screen.gHeight);
         batch.draw(background, 0, height2, screen.gWidth, screen.gHeight);
-    }
-
-    // INTERACTION METHODS
-
-    public void toggleStop(boolean immediateStopn){
-        if (currentSpeed == 0)
-            currentSpeed = INITIAL_SPEED;
-        else
-            currentSpeed = 0;
-    }
-
-    public float getSpeed(){
-        return currentSpeed;
-    }
-
-    public float getAcceleration(){
-        return 0;
-    }
-
-    public void setAcceleration(float acceleration){
-        this.acceleration = acceleration;
     }
 
 }

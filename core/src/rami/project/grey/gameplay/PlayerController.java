@@ -13,7 +13,7 @@ import rami.project.grey.ui.screens.ScreenBackground;
  * This class is what controls every movable thing on the screen.
  * */
 public final class PlayerController implements GridSubscriber {
-    private ScreenBackground background;
+    private ScreenBackground bg;
     private PlayerHud hud;
     private Player player;
     public BigChika view;
@@ -23,6 +23,13 @@ public final class PlayerController implements GridSubscriber {
     public static final float CONSTANT_MOTION_SCORE_RATE = 1.15f;
     public static final float NON_CONSTANT_MOTION_SCORE_RATE = 1.56f;
     public static final float STOPPED_SCORE_RATE = -0.86f;
+
+    // MOTION
+    private float currentSpeed = 100f;
+    private float currentAccel = 1f;
+
+    private float targetSpeed = 0f;
+    private float previousAcceleration = 0f;
 
     // Properties of a game
     private float scoreGain = 0;
@@ -37,8 +44,8 @@ public final class PlayerController implements GridSubscriber {
     // Coords
     public Vector2 gridPos;
 
-    public PlayerController(ScreenBackground background, PlayerHud hud, int gridColumns, int gridRows, GridManager gridManager){
-        this.background = background;
+    public PlayerController(ScreenBackground bg, PlayerHud hud, int gridColumns, int gridRows, GridManager gridManager){
+        this.bg = bg;
         this.hud = hud;
         this.player = new Player();
         this.view = new BigChika(player.maxAllowableTowes());
@@ -51,18 +58,29 @@ public final class PlayerController implements GridSubscriber {
         this.gridManager.addSubscriber(this);
     }
 
-    public void update(float dt, float speed, float acceleration){
-        background.update(dt);
+    public void update(float dt){
+        if (stopped){
+            // Reaccelerate
 
-        if (speed == 0 && acceleration == 0)
+            stopped = false;
+        } else {
             stopped = true;
-        else if (speed != 0)
+        }
+
+        // Limit acceleration when reached target speed
+        if (currentSpeed == targetSpeed)
+            currentAccel = 0;
+
+
+        if (currentSpeed == 0 && currentAccel == 0)
+            stopped = true;
+        else if (currentSpeed != 0)
             stopped = false;
 
         if (stopped)
             scoreGain = STOPPED_SCORE_RATE;
         else {
-            if (acceleration == 0){
+            if (currentAccel == 0){
                 scoreGain = CONSTANT_MOTION_SCORE_RATE;
             } else
                 scoreGain = NON_CONSTANT_MOTION_SCORE_RATE;
@@ -71,7 +89,12 @@ public final class PlayerController implements GridSubscriber {
         score += scoreGain;
 
         // Leave it till last
+        bg.update(dt, currentSpeed);
         hud.update(dt);
+    }
+
+    private void accelerateToAndReach(){
+
     }
 
     // TODO configure this so as the game lasts more the more able to spawn
@@ -94,6 +117,10 @@ public final class PlayerController implements GridSubscriber {
 
     public void moveLeft(){
         gridManager.moveTo((int) gridPos.x, (int) gridPos.y, -1, 0);
+    }
+
+    public void toggleStop(){
+        stopped = !stopped;
     }
 
     // GRID SUBSCRIBER
