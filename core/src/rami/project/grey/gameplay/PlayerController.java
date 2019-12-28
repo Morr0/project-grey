@@ -23,8 +23,6 @@ public final class PlayerController implements GridSubscriber {
     private GridManager gridManager;
 
     // CONSTANTS
-    public static final float CONSTANT_MOTION_SCORE_RATE = 1.15f;
-    public static final float NON_CONSTANT_MOTION_SCORE_RATE = 1.56f;
     public static final float STOPPED_SCORE_RATE = -0.86f;
 
     private static final float INITIAL_STARTING_VELOCITY = 125f;
@@ -36,17 +34,14 @@ public final class PlayerController implements GridSubscriber {
     // MOTION
     private float currentSpeed;
     private float currentAccel;
-    private int accelerationFactor = 1;
-    // In seconds
-    private int accelerationTime;
+
+    // MOTION ALTERNATIVE // In terms of force
+    private static final short gravityConstant = -10;
+    private float netForce;
 
     // Properties of a game
     private float scoreGain = 0;
     private float score = 0;
-
-    // UTIL
-    private Random rand = new Random();
-
 
     public float getScore() { return score; }
 
@@ -60,7 +55,7 @@ public final class PlayerController implements GridSubscriber {
         this.bg = bg;
         this.hud = hud;
         this.player = new Player();
-        this.view = new BigChika(player.maxAllowableTowes());
+        this.view = new BigChika(player.maxAllowableTowes(), player.maxAllowableAttachments());
 
         this.gridManager = gridManager;
         this.gridManager.setPlayerAt(gridColumns / 2, gridColumns / 2, view);
@@ -72,24 +67,14 @@ public final class PlayerController implements GridSubscriber {
         // Defaults
         this.currentSpeed = INITIAL_STARTING_VELOCITY;
         this.currentAccel = INITIAL_STARTING_DECELERATION;
-        this.accelerationTime = 5;
-    }
-
-    public void applyAcceleration(int accelerationFactor){
-        this.accelerationFactor = accelerationFactor;
-        accelerationTime = 5;
     }
 
     public void update(float dt){
-        if (accelerationTime > 0)
-            currentSpeed += currentAccel * difficultyAccumulator
-                    * accelerationFactor * accelerationTime * dt;
-        accelerationTime--;
+        if (netForce != 0){
+            currentAccel = netForce / view.getWeight();
+        }
 
-        // Difficulty regulation --- START
-        difficultyAccumulator += 0.0001f;
-        difficultyAccumulator /= rand.nextInt(20) == 10? 2: 1;
-        // Difficulty regulation --- END
+        currentSpeed += currentAccel * dt;
 
         // Score regulation  --- BEGIN ---
 
@@ -105,6 +90,10 @@ public final class PlayerController implements GridSubscriber {
         // Leave it till last
         bg.update(dt, currentSpeed);
         hud.update(dt);
+    }
+
+    public void thrust(float amount){
+        netForce += amount;
     }
 
     // TODO configure this so as the game lasts more the more able to spawn
@@ -132,8 +121,6 @@ public final class PlayerController implements GridSubscriber {
     public void toggleStop(){
         stopped = !stopped;
         currentAccel *= stopped? -1: 1;
-        accelerationTime = 5;
-//        accelerationFactor = stopped? 75000: 100000;
     }
 
     // GRID SUBSCRIBER

@@ -11,7 +11,7 @@ public interface IEntity {
      * */
     String getName();
 
-    boolean isPlayable();
+    float getWeight();
 
     // INTERACTION CALLBACKS
     /**

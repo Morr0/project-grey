@@ -16,7 +16,7 @@ public final class Spawner implements GridSubscriber {
     private LinkedList<Vector2> reservedGrids;
 
     // To control whether or not to spawn
-    public boolean canSpawn = true;
+    private boolean canSpawn = true;
 
     // The player/s are not to be counted as spawned
     private int currentlySpawnedItems = 0;
@@ -30,8 +30,8 @@ public final class Spawner implements GridSubscriber {
     // This is so spawning does not happen on every frame update
     private long lastSpawnTime = 0;
     // These describe the intervals of updating the spawner to spawn or not
-    private static final short spawningIntervalMin = 900, spawningIntervalMax = 1100;
-    private static final short spawningIntervalInCaseOfLag = 3500;
+    private static final short spawningIntervalMin = 1500, spawningIntervalMax = 1800;
+    private static final short spawningIntervalInCaseOfLag = 4600;
 
     public Spawner(GridManager gridManager, int gridColumns, int gridRows, int maxAllowableSpawns) {
         this.gridManager = gridManager;

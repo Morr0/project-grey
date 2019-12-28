@@ -37,4 +37,6 @@ public final class Player {
     byte maxAllowableTowes(){
         return 2;
     }
+
+    byte maxAllowableAttachments(){ return 2; }
 }

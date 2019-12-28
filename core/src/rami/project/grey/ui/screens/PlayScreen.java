@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import rami.project.grey.Game;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.Chika;
+import rami.project.grey.core.entity.consumable.IAttachable;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.spawning.Spawner;
@@ -143,6 +144,9 @@ public class PlayScreen extends BaseScreen {
             case Input.Keys.F:
                 hud.showFps = !hud.showFps;
                 break;
+            case Input.Keys.T:
+                controller.thrust(10 * Gdx.graphics.getDeltaTime());
+                break;
         }
 
         return super.keyDown(keycode);
@@ -167,6 +171,15 @@ public class PlayScreen extends BaseScreen {
     private void drawEntity(IEntity entity, Vector2 pos){
         if (entity instanceof Chika)
             drawChika((Chika) entity, pos);
+        else if (entity instanceof IAttachable)
+            drawAttachments((IAttachable) entity, pos);
+    }
+
+    private void drawAttachments(IAttachable entity, Vector2 pos){
+        Vector2 pixels = gCal.getPixelPosFromGrid(pos);
+        batch.draw(game.res.getBackground(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
+
+        log("Attachment Drawning");
     }
 
     // This relays all attached towes to not be drawn by this but from the parent
@@ -181,7 +194,7 @@ public class PlayScreen extends BaseScreen {
     // This draws the big chika and all towed chikas
     private void drawBigChika(){
         // Drawing the BigChika first
-        Vector2 pixels = gCal.getPixelPosFromGrid((int) controller.gridPos.x, (int) controller.gridPos.y);
+        Vector2 pixels = gCal.getPixelPosFromGrid(controller.gridPos);
         batch.draw(game.res.getBigChika(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
 
         // Drawing the towed ones

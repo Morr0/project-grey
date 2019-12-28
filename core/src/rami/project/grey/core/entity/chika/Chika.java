@@ -30,6 +30,11 @@ public class Chika implements IEntity, ILiveable {
         }
     }
 
+    @Override
+    public float getWeight() {
+        return size.towWeight;
+    }
+
     // Size is set once
     protected ChikaSize size;
 
@@ -51,11 +56,6 @@ public class Chika implements IEntity, ILiveable {
         return size.name;
     }
 
-    @Override
-    public boolean isPlayable() {
-        return false;
-    }
-
     // ILiveable
     protected short totalHealth;
     protected short currentHealth;
@@ -69,6 +69,8 @@ public class Chika implements IEntity, ILiveable {
     public short getCurrentHealth() {
         return currentHealth;
     }
+
+
 
     // EVENT CALLBACKS
 
