@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.consumable.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
 import rami.project.grey.core.spawning.Spawner;
 
 // TODO a certain IEntity must only touch one grid at a single time
@@ -53,7 +54,7 @@ public final class GridManager implements Spawner.SpawningCallback {
         this.subscribers = new ArrayList<>(2);
 
         // Temporary spawn until
-        Thruster thruster = new Thruster();
+        Thruster thruster = new Thruster(ThrusterType.BASIC);
         put(0, 2, thruster);
     }
 

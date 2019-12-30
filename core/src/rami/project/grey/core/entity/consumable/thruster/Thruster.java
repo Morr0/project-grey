@@ -4,29 +4,33 @@ import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.consumable.IAttachable;
 
-public class Thruster implements IAttachable {
-    private static byte HEALTH_PENALTY = -2;
-    private static byte WEIGHT = 2;
+public final class Thruster implements IAttachable {
+
+    ThrusterType type;
+
+    public Thruster(ThrusterType type){
+        this.type = type;
+    }
 
     public boolean isAttached = false;
 
     public short getSpeedMultiplier(){
-        return 125;
+        return type.SPEED_MULTIPLIER;
     }
 
     public short getAccelerationMultiplier(){
-        return 2000;
+        return type.ACCEL_MULTIPLIER;
     }
 
     /**
      * Gives the maximum time a thruster can go for in milliseconds
      * */
     public short getBurstTime(){
-        return 3000;
+        return type.BURST_TIME;
     }
 
     public short getBurstCooldown(){
-        return 5000;
+        return type.BURST_COOLDOWN;
     }
 
     @Override
@@ -36,12 +40,12 @@ public class Thruster implements IAttachable {
 
     @Override
     public float getWeight() {
-        return WEIGHT;
+        return type.WEIGHT;
     }
 
     @Override
     public byte getHealthPenalty() {
-        return HEALTH_PENALTY;
+        return type.HEALTH_PENALTY;
     }
 
     @Override

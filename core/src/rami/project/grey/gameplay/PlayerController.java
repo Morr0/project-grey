@@ -135,22 +135,6 @@ public final class PlayerController implements GridSubscriber {
         hud.update(dt);
     }
 
-    public void toggleThruster(){
-        // Just in case
-        if (view.attachments.get(AttachmentStructure.THRUSTER_SLOT) == null)
-            return;
-
-        Thruster thruster = (Thruster) view.attachments.get(AttachmentStructure.THRUSTER_SLOT);
-
-        // Make sure to retoggle on only after cooldown
-        if (System.currentTimeMillis() > targetBurstCooldownEnd)
-            currentlyThrusting = !currentlyThrusting;
-
-        if (currentlyThrusting){
-            targetBurstTimeEnd = System.currentTimeMillis() + thruster.getBurstTime();
-        }
-    }
-
     // TODO configure this so as the game lasts more the more able to spawn
     public byte getMaximumAllowableSpawns() {
         return 0;
@@ -175,6 +159,22 @@ public final class PlayerController implements GridSubscriber {
 
     public void toggleStop(){
         stopped = !stopped;
+    }
+
+    public void toggleThruster(){
+        // KEEP IT
+        if (view.attachments.get(AttachmentStructure.THRUSTER_SLOT) == null)
+            return;
+
+        Thruster thruster = (Thruster) view.attachments.get(AttachmentStructure.THRUSTER_SLOT);
+
+        // Make sure to retoggle on only after cooldown
+        if (System.currentTimeMillis() > targetBurstCooldownEnd)
+            currentlyThrusting = !currentlyThrusting;
+
+        if (currentlyThrusting){ // Sets timer if is thrusting
+            targetBurstTimeEnd = System.currentTimeMillis() + thruster.getBurstTime();
+        }
     }
 
     // GRID SUBSCRIBER
