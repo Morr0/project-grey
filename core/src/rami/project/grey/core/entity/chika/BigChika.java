@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.consumable.AttachmentStructure;
 import rami.project.grey.core.entity.consumable.IAttachable;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 public class BigChika extends Chika {
@@ -18,7 +17,7 @@ public class BigChika extends Chika {
     private Stack<Chika> towes;
 
     // Attachments
-    AttachmentStructure attachments;
+    public AttachmentStructure attachments;
 
     public BigChika(byte maxAllowableTowes, byte maxAllowableAttachments) {
         super(ChikaSize.XLARGE);

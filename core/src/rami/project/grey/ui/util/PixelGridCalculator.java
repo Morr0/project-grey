@@ -31,8 +31,8 @@ public final class PixelGridCalculator {
      * @return the point describing the bottom left corner of the grid
      * */
     public final Vector2 getPixelPosFromGrid(Vector2 pos){
-        int screenX = (int) pos.x * gridWidth;
-        int screenY = (int) pos.y * gridHeight;
+        float screenX = pos.x * gridWidth;
+        float screenY =  pos.y * gridHeight;
 
         return new Vector2(screenX, screenY);
     }

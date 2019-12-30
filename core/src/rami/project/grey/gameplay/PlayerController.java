@@ -1,15 +1,15 @@
 package rami.project.grey.gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
-import rami.project.grey.Game;
 import rami.project.grey.core.entity.chika.BigChika;
+import rami.project.grey.core.entity.consumable.AttachmentStructure;
+import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.ui.screens.PlayerHud;
 import rami.project.grey.ui.screens.ScreenBackground;
-
-import java.util.Random;
 
 /**
  * Is what controls the player where it coordinates between the logic and view of the game so each thing can do its own.
@@ -25,19 +25,24 @@ public final class PlayerController implements GridSubscriber {
     // CONSTANTS
     public static final float STOPPED_SCORE_RATE = -0.86f;
 
-    private static final float INITIAL_STARTING_VELOCITY = 125f;
-    private static final float INITIAL_STARTING_DECELERATION = 4.3f;
+    private static final float DEFAULT_VELOCITY = 125f;
 
-    //
-    private float difficultyAccumulator = 0.0001f;
+    // UP Time in milliseconds
+    private long startingTime;
 
     // MOTION
+    // The desired speed changes dynamically
+    private float desiredSpeed;
     private float currentSpeed;
     private float currentAccel;
 
-    // MOTION ALTERNATIVE // In terms of force
-    private static final short gravityConstant = -10;
-    private float netForce;
+    // THRUSTING
+    // So that the thruster runs for the required time only
+    private long targetBurstTimeEnd;
+    // So that there is a cooldown
+    private long targetBurstCooldownEnd;
+    private boolean currentlyThrusting = false;
+    private float thrustAcceleration = 0f;
 
     // Properties of a game
     private float scoreGain = 0;
@@ -57,6 +62,8 @@ public final class PlayerController implements GridSubscriber {
         this.player = new Player();
         this.view = new BigChika(player.maxAllowableTowes(), player.maxAllowableAttachments());
 
+        this.startingTime = System.currentTimeMillis();
+
         this.gridManager = gridManager;
         this.gridManager.setPlayerAt(gridColumns / 2, gridColumns / 2, view);
 
@@ -65,16 +72,52 @@ public final class PlayerController implements GridSubscriber {
         this.gridManager.addSubscriber(this);
 
         // Defaults
-        this.currentSpeed = INITIAL_STARTING_VELOCITY;
-        this.currentAccel = INITIAL_STARTING_DECELERATION;
+        this.desiredSpeed = DEFAULT_VELOCITY;
+        this.currentSpeed = DEFAULT_VELOCITY;
     }
 
     public void update(float dt){
-        if (netForce != 0){
-            currentAccel = netForce / view.getWeight();
+        // SPEED REGULATION --- BEGIN ---
+        desiredSpeed = DEFAULT_VELOCITY;
+
+        if (currentlyThrusting){
+            if (stopped)
+                stopped = false;
+
+            Thruster thruster = (Thruster) view.attachments.get(AttachmentStructure.THRUSTER_SLOT);
+
+            desiredSpeed *= thruster.getSpeedMultiplier();
+
+            thrustAcceleration = thruster.getAccelerationMultiplier() * dt;
+
+            // Thrust timing regulator
+            if (System.currentTimeMillis() >= targetBurstTimeEnd){
+                currentlyThrusting = false;
+
+                // Starting cooldown
+                targetBurstCooldownEnd = System.currentTimeMillis() + thruster.getBurstCooldown();
+            }
+
+        } else {
+            // To decelerate from a fast thrust
+            if (currentSpeed > desiredSpeed){
+                float diffSpeeds = currentSpeed - desiredSpeed;
+                // Don't divide by dt so that it decelerates smoothly
+                thrustAcceleration = -diffSpeeds;
+            } else // Just in case
+                currentSpeed = desiredSpeed;
         }
 
+        currentAccel = 1 / view.getWeight();
+        currentAccel += thrustAcceleration;
+
         currentSpeed += currentAccel * dt;
+
+        // To stop immediately
+        if (stopped)
+            currentSpeed = 0;
+
+        // SPEED REGULATION --- END ---
 
         // Score regulation  --- BEGIN ---
 
@@ -92,13 +135,25 @@ public final class PlayerController implements GridSubscriber {
         hud.update(dt);
     }
 
-    public void thrust(float amount){
-        netForce += amount;
+    public void toggleThruster(){
+        // Just in case
+        if (view.attachments.get(AttachmentStructure.THRUSTER_SLOT) == null)
+            return;
+
+        Thruster thruster = (Thruster) view.attachments.get(AttachmentStructure.THRUSTER_SLOT);
+
+        // Make sure to retoggle on only after cooldown
+        if (System.currentTimeMillis() > targetBurstCooldownEnd)
+            currentlyThrusting = !currentlyThrusting;
+
+        if (currentlyThrusting){
+            targetBurstTimeEnd = System.currentTimeMillis() + thruster.getBurstTime();
+        }
     }
 
     // TODO configure this so as the game lasts more the more able to spawn
     public byte getMaximumAllowableSpawns() {
-        return 5;
+        return 0;
     }
 
     // MOTION
@@ -120,7 +175,6 @@ public final class PlayerController implements GridSubscriber {
 
     public void toggleStop(){
         stopped = !stopped;
-        currentAccel *= stopped? -1: 1;
     }
 
     // GRID SUBSCRIBER

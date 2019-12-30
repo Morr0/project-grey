@@ -11,6 +11,7 @@ import rami.project.grey.Game;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.IAttachable;
+import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.spawning.Spawner;
@@ -98,7 +99,7 @@ public class PlayScreen extends BaseScreen {
         background.draw();
 
         for (Grid grid: gManager.getOccupiedGrids()){
-            Vector2 pixels = gCal.getPixelPosFromGrid(grid.x, grid.y);
+            Vector2 pixels = new Vector2(grid.x, grid.y);
             drawEntity(grid.currentResider, pixels);
         }
 
@@ -145,7 +146,8 @@ public class PlayScreen extends BaseScreen {
                 hud.showFps = !hud.showFps;
                 break;
             case Input.Keys.T:
-                controller.thrust(10 * Gdx.graphics.getDeltaTime());
+                controller.toggleThruster();
+                log("Thrust toggle");
                 break;
         }
 
@@ -162,6 +164,7 @@ public class PlayScreen extends BaseScreen {
 
     @Override
     protected void clicked(int screenX, int screenY, float elaspedMillisSeconds) {
+
     }
 
     // ---------------------- UTILS ----------------------
@@ -175,11 +178,11 @@ public class PlayScreen extends BaseScreen {
             drawAttachments((IAttachable) entity, pos);
     }
 
-    private void drawAttachments(IAttachable entity, Vector2 pos){
-        Vector2 pixels = gCal.getPixelPosFromGrid(pos);
-        batch.draw(game.res.getBackground(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
-
-        log("Attachment Drawning");
+    private void drawAttachments(IAttachable attachment, Vector2 pos){
+        if (attachment instanceof Thruster){
+            Vector2 pixels = gCal.getPixelPosFromGrid(pos);
+            batch.draw(game.res.getBackground(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
+        }
     }
 
     // This relays all attached towes to not be drawn by this but from the parent

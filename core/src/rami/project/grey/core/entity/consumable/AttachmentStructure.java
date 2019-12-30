@@ -1,5 +1,7 @@
 package rami.project.grey.core.entity.consumable;
 
+import rami.project.grey.core.entity.consumable.thruster.Thruster;
+
 import java.util.ArrayList;
 
 /**
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 public class AttachmentStructure {
     public static final byte RIGHT_SLOT = 1;
     public static final byte LEFT_SLOT = 2;
-    public static final byte BOTTOM_SLOT = 3;
+    public static final byte THRUSTER_SLOT = 3;
 
     public byte maxAllowed;
     public byte used;
@@ -17,7 +19,7 @@ public class AttachmentStructure {
     // Slots
     private IAttachable right;
     private IAttachable left;
-    private IAttachable bottom;
+    private Thruster thrusterSpot;
 
     public AttachmentStructure(byte maxAllowed){
         this.maxAllowed = maxAllowed;
@@ -28,8 +30,8 @@ public class AttachmentStructure {
             right = attachment;
         else if (slot == LEFT_SLOT)
             left = attachment;
-        else if (slot == BOTTOM_SLOT)
-            bottom = attachment;
+        else if (slot == THRUSTER_SLOT)
+            thrusterSpot = (Thruster) attachment;
 
         updateVariables();
     }
@@ -40,7 +42,7 @@ public class AttachmentStructure {
             used++;
         if (left != null)
             used++;
-        if (bottom != null)
+        if (thrusterSpot != null)
             used++;
     }
 
@@ -49,8 +51,8 @@ public class AttachmentStructure {
             right = null;
         else if (slot == LEFT_SLOT)
             left = null;
-        else if (slot == BOTTOM_SLOT)
-            bottom = null;
+        else if (slot == THRUSTER_SLOT)
+            thrusterSpot = null;
 
         updateVariables();
     }
@@ -61,8 +63,8 @@ public class AttachmentStructure {
                 return right;
             case LEFT_SLOT:
                 return left;
-            case BOTTOM_SLOT:
-                return bottom;
+            case THRUSTER_SLOT:
+                return thrusterSpot;
             default:
                 return null;
         }
@@ -75,8 +77,8 @@ public class AttachmentStructure {
             attachables.add(right);
         if (left != null)
             attachables.add(left);
-        if (bottom != null)
-            attachables.add(bottom);
+        if (thrusterSpot != null)
+            attachables.add(thrusterSpot);
 
         return attachables;
     }
@@ -87,7 +89,7 @@ public class AttachmentStructure {
 
     public byte getSpot(IAttachable attachable){
         if (attachable instanceof Thruster)
-            return BOTTOM_SLOT;
+            return THRUSTER_SLOT;
 
         return -1;
     }

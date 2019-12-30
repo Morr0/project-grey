@@ -5,7 +5,7 @@ import java.util.*;
 import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
-import rami.project.grey.core.entity.consumable.Thruster;
+import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.spawning.Spawner;
 
 // TODO a certain IEntity must only touch one grid at a single time
