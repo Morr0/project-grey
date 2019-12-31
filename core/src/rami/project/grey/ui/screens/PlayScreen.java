@@ -14,7 +14,7 @@ import rami.project.grey.core.entity.consumable.IAttachable;
 import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
-import rami.project.grey.core.spawning.Spawner;
+import rami.project.grey.core.gridsystem.Spawner;
 import rami.project.grey.gameplay.PlayerController;
 import rami.project.grey.ui.util.PixelGridCalculator;
 
@@ -67,7 +67,7 @@ public class PlayScreen extends BaseScreen {
         controller = new PlayerController(background, hud, gridColumns, gridRows, gManager);
 
         // Spawning
-        spawner = new Spawner(gManager, gridColumns, gridRows, controller.getMaximumAllowableSpawns());
+        spawner = new Spawner(gManager, controller.getMaximumAllowableSpawns());
     }
 
     /* ALL UNITS ARE IN GRID UNLESS SPECIFIED OTHERWISE */

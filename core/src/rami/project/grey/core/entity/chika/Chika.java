@@ -1,12 +1,10 @@
 package rami.project.grey.core.entity.chika;
 
-import com.badlogic.gdx.Gdx;
-
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.ILiveable;
 
 // The good entity that the player controls
-public class Chika implements IEntity, ILiveable {
+public class Chika implements ILiveable {
 
     protected byte BASE_HEALTH = 4;
 

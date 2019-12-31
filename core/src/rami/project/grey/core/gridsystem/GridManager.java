@@ -7,19 +7,15 @@ import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
-import rami.project.grey.core.spawning.Spawner;
 
 // TODO a certain IEntity must only touch one grid at a single time
 // To be used directly with the graphics
-public final class GridManager implements Spawner.SpawningCallback {
-    private int columns, rows;
+public final class GridManager implements Spawner.SpawningNotifier {
+    int columns, rows;
 
     private Grid[][] map;
     // This is used to decrease processing
-    private LinkedList<Grid> occupiedGrids;
-
-    // Records player's
-    private LinkedList<Grid> players;
+    LinkedList<Grid> occupiedGrids;
 
     // Level skipping and stuff
     private boolean skippedLevel = false;
@@ -29,10 +25,6 @@ public final class GridManager implements Spawner.SpawningCallback {
 
     public LinkedList<Grid> getOccupiedGrids() {
         return occupiedGrids;
-    }
-
-    public LinkedList<Grid> getPlayers() {
-        return players;
     }
 
     // The reason columns and rows are not constants is to deal with the future expandability of the game
@@ -49,7 +41,6 @@ public final class GridManager implements Spawner.SpawningCallback {
         }
 
         this.occupiedGrids = new LinkedList<>();
-        this.players = new LinkedList<>();
 
         this.subscribers = new ArrayList<>(2);
 
@@ -87,7 +78,6 @@ public final class GridManager implements Spawner.SpawningCallback {
 
     public void setPlayerAt(int locationX, int locationY, IEntity entity){
         map[locationX][locationY].currentResider = entity;
-        players.add(map[locationX][locationY]);
     }
 
     // Updating per frame

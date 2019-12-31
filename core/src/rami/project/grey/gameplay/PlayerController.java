@@ -1,6 +1,5 @@
 package rami.project.grey.gameplay;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.core.entity.chika.BigChika;
@@ -28,7 +27,7 @@ public final class PlayerController implements GridSubscriber {
     private static final float DEFAULT_VELOCITY = 125f;
 
     // UP Time in milliseconds
-    private long startingTime;
+    long startingTime;
 
     // MOTION
     // The desired speed changes dynamically
