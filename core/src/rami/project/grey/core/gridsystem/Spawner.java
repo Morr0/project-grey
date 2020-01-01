@@ -146,9 +146,9 @@ public final class Spawner implements GridSubscriber {
 
     private void calculateWeightings(){
         short howMuchToSpawn = (short) (maxAllowableSpawns - currentlySpawned);
-
-        consumablesToSpawn = howMuchToSpawn - 1;
-        chikasToSpawn
+//
+//        consumablesToSpawn = howMuchToSpawn - 1;
+//        chikasToSpawn
     }
 
     private void spawnBasedOnWeighting(short x, short y){

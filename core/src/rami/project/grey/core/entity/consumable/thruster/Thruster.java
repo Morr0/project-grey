@@ -44,7 +44,7 @@ public final class Thruster implements IAttachable {
     }
 
     @Override
-    public byte getHealthPenalty() {
+    public short getHealthPenalty() {
         return type.HEALTH_PENALTY;
     }
 

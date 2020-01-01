@@ -41,15 +41,15 @@ public class PlayScreen extends BaseScreen {
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
 
-        updateGridSystem();
-
+        initGrids();
         initDrawables();
         initControllers();
     }
 
-    private void updateGridSystem(){
+    private void initGrids(){
         // Initialising the grid manager
-        gridColumns = gridRows = 9;
+        gridColumns = 9;
+        gridRows = 9;
         gCal = new PixelGridCalculator(gWidth, gHeight, gridColumns, gridRows);
         gManager = new GridManager(gridColumns, gridRows);
     }
@@ -67,7 +67,8 @@ public class PlayScreen extends BaseScreen {
         controller = new PlayerController(background, hud, gridColumns, gridRows, gManager);
 
         // Spawning
-        spawner = new Spawner(gManager, controller.getMaximumAllowableSpawns());
+        spawner = new Spawner(gManager, controller.getMaximumAllowableSpawns(),
+                (int) controller.gridPos.x, (int)controller.gridPos.y);
     }
 
     /* ALL UNITS ARE IN GRID UNLESS SPECIFIED OTHERWISE */
