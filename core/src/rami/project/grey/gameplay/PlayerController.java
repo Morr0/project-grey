@@ -27,30 +27,23 @@ public final class PlayerController implements GridSubscriber {
     private static final float DEFAULT_VELOCITY = 125f;
 
     // UP Time in milliseconds
-    long startingTime;
+    private long startingTime;
 
     // MOTION
+    // States
+    boolean stopped = false;
     // The desired speed changes dynamically
-    private float desiredSpeed;
-    private float currentSpeed;
-    private float currentAccel;
+    float desiredSpeed;
+    float currentSpeed;
+    float currentAccel;
 
-    // THRUSTING
-    // So that the thruster runs for the required time only
-    private long targetBurstTimeEnd;
-    // So that there is a cooldown
-    private long targetBurstCooldownEnd;
-    private boolean currentlyThrusting = false;
-    private float thrustAcceleration = 0f;
+    private ThrustingController thruster;
 
     // Properties of a game
     private float scoreGain = 0;
     private float score = 0;
 
     public float getScore() { return score; }
-
-    // States
-    private boolean stopped = false;
 
     // Coords
     public Vector2 gridPos;
@@ -73,42 +66,19 @@ public final class PlayerController implements GridSubscriber {
         // Defaults
         this.desiredSpeed = DEFAULT_VELOCITY;
         this.currentSpeed = DEFAULT_VELOCITY;
+
+        this.thruster = new ThrustingController(this);
     }
 
     public void update(float dt){
         // SPEED REGULATION --- BEGIN ---
         desiredSpeed = DEFAULT_VELOCITY;
 
-        if (currentlyThrusting){
-            if (stopped)
-                stopped = false;
-
-            Thruster thruster = (Thruster) view.attachments.get(AttachmentStructure.THRUSTER_SLOT);
-
-            desiredSpeed *= thruster.getSpeedMultiplier();
-
-            thrustAcceleration = thruster.getAccelerationMultiplier() * dt;
-
-            // Thrust timing regulator
-            if (System.currentTimeMillis() >= targetBurstTimeEnd){
-                currentlyThrusting = false;
-
-                // Starting cooldown
-                targetBurstCooldownEnd = System.currentTimeMillis() + thruster.getBurstCooldown();
-            }
-
-        } else {
-            // To decelerate from a fast thrust
-            if (currentSpeed > desiredSpeed){
-                float diffSpeeds = currentSpeed - desiredSpeed;
-                // Don't divide by dt so that it decelerates smoothly
-                thrustAcceleration = -diffSpeeds;
-            } else // Just in case
-                currentSpeed = desiredSpeed;
-        }
+        // Updates speed and acceleration depending on the thruster
+        thruster.updateThrusting(dt);
 
         currentAccel = 1 / view.getWeight();
-        currentAccel += thrustAcceleration;
+        currentAccel += thruster.thrustAcceleration;
 
         currentSpeed += currentAccel * dt;
 
@@ -161,19 +131,7 @@ public final class PlayerController implements GridSubscriber {
     }
 
     public void toggleThruster(){
-        // KEEP IT
-        if (view.attachments.get(AttachmentStructure.THRUSTER_SLOT) == null)
-            return;
-
-        Thruster thruster = (Thruster) view.attachments.get(AttachmentStructure.THRUSTER_SLOT);
-
-        // Make sure to retoggle on only after cooldown
-        if (System.currentTimeMillis() > targetBurstCooldownEnd)
-            currentlyThrusting = !currentlyThrusting;
-
-        if (currentlyThrusting){ // Sets timer if is thrusting
-            targetBurstTimeEnd = System.currentTimeMillis() + thruster.getBurstTime();
-        }
+        thruster.toggleThruster();
     }
 
     // GRID SUBSCRIBER

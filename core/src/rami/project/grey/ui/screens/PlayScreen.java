@@ -148,7 +148,6 @@ public class PlayScreen extends BaseScreen {
                 break;
             case Input.Keys.T:
                 controller.toggleThruster();
-                log("Thrust toggle");
                 break;
         }
 
