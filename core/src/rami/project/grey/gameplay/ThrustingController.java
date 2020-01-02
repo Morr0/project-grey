@@ -8,10 +8,10 @@ class ThrustingController {
     private PlayerController c;
 
     // So that the thruster runs for the required time only
-    long targetBurstTimeEnd;
+    private long targetBurstTimeEnd;
     // So that there is a cooldown
-    long targetBurstCooldownEnd;
-    boolean currentlyThrusting = false;
+    private long targetBurstCooldownEnd;
+    private boolean currentlyThrusting = false;
     float thrustAcceleration = 0f;
 
     ThrustingController(PlayerController c){
@@ -38,6 +38,13 @@ class ThrustingController {
         }
     }
 
+    void toggleStop(){
+        // To make sure there exists a thruster to work
+        if (c.view.attachments.get(AttachmentStructure.THRUSTER_SLOT) != null){
+            c.stopped = !c.stopped;
+        }
+    }
+
     void updateThrusting(float dt){
         if (currentlyThrusting) {
             if (c.stopped)
@@ -56,13 +63,11 @@ class ThrustingController {
                 // Starting cooldown
                 targetBurstCooldownEnd = System.currentTimeMillis() + thruster.getBurstCooldown();
             }
-        } else {
-            // To decelerate from a fast thrust
-            if (c.currentSpeed > c.desiredSpeed){
-                float diffSpeeds = c.currentSpeed - c.desiredSpeed;
-                // Don't divide by dt so that it decelerates smoothly
-                thrustAcceleration = -diffSpeeds;
-            } else // Just in case
+        } else if (!currentlyThrusting || c.stopped) {
+            // To decelerate/accelerate
+            if (c.currentSpeed > c.desiredSpeed)
+                thrustAcceleration = -(c.currentSpeed - c.desiredSpeed); // Don't divide by dt so that it decelerates smoothly
+            else // Just in case
                 c.currentSpeed = c.desiredSpeed;
         }
     }

@@ -41,6 +41,8 @@ public final class GridManager {
 
         this.subscribers = new ArrayList<>(2);
 
+        // Temporary thruster
+        put(4, 3, new Thruster(ThrusterType.BASIC));
     }
 
     public void addSubscriber(GridSubscriber sub){
@@ -131,6 +133,7 @@ public final class GridManager {
         // The actual moving
         map[desiredX][desiredY].currentResider = map[oldX][oldY].currentResider;
         map[oldX][oldY].currentResider = null;
+        occupiedGrids.add(map[desiredX][desiredY]); // Since the reference gets deleted
 
         // Notifying subscribers
         if (map[desiredX][desiredY].currentResider instanceof BigChika)

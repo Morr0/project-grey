@@ -1,0 +1,31 @@
+package rami.project.grey.gameplay;
+
+final class ScoreManager {
+    private PlayerController c;
+
+    final float STOPPED_SCORE_RATE = -0.58f;
+
+    private float currentScore = 0;
+    private float scoreGain;
+
+    ScoreManager(PlayerController c) {
+        this.c = c;
+    }
+
+    // Don't take in dt as it will make scoring more on better devices
+    void update(){
+        scoreGain = c.stopped? STOPPED_SCORE_RATE: 1;
+        scoreGain *= (float) (c.view.getTotalHealth()/c.view.getCurrentHealth());
+        scoreGain /= c.view.getNoTows() * c.view.getCurrentHealth() + 1;
+
+        currentScore += scoreGain;
+
+        // Make sure to always have non negative score
+        if (currentScore < 0)
+            currentScore = 0;
+    }
+
+    float get(){
+        return currentScore;
+    }
+}

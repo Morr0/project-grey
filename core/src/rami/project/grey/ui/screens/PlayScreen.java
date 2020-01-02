@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.Game;
 import rami.project.grey.core.entity.IEntity;
+import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.IAttachable;
 import rami.project.grey.core.entity.consumable.thruster.Thruster;
@@ -100,11 +101,8 @@ public class PlayScreen extends BaseScreen {
         background.draw();
 
         for (Grid grid: gManager.getOccupiedGrids()){
-            Vector2 pixels = new Vector2(grid.x, grid.y);
-            drawEntity(grid.currentResider, pixels);
+            drawGridResider(grid);
         }
-
-        drawBigChika();
 
         // Must be last because it is on top
         hud.draw(batch, controller.getScore(), Gdx.graphics.getFramesPerSecond());
@@ -171,27 +169,29 @@ public class PlayScreen extends BaseScreen {
 
     // DRAWING
 
-    private void drawEntity(IEntity entity, Vector2 pos){
-        if (entity instanceof Chika)
-            drawChika((Chika) entity, pos);
-        else if (entity instanceof IAttachable)
-            drawAttachments((IAttachable) entity, pos);
+    private void drawGridResider(Grid grid){
+        Vector2 pixelPos = gCal.getPixelPosFromGrid(grid.x, grid.y);
+
+        if (grid.currentResider instanceof Chika)
+            drawChika((Chika) grid.currentResider, pixelPos);
+        else if (grid.currentResider instanceof IAttachable)
+            drawAttachments((IAttachable) grid.currentResider, pixelPos);
     }
 
-    private void drawAttachments(IAttachable attachment, Vector2 pos){
+    private void drawAttachments(IAttachable attachment, Vector2 pixels){
         if (attachment instanceof Thruster){
-            Vector2 pixels = gCal.getPixelPosFromGrid(pos);
             batch.draw(game.res.getBackground(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
         }
     }
 
     // This relays all attached towes to not be drawn by this but from the parent
-    private void drawChika(Chika chika, Vector2 pos){
-        if (!chika.hasParent){
+    private void drawChika(Chika chika, Vector2 pixels){
+        if (chika instanceof BigChika)
+            drawBigChika();
+        else if (!chika.hasParent){
             Chika.ChikaSize size = chika.getSize();
-            pos = gCal.getPixelPosFromGrid(pos);
             Vector2 dimensions = new Vector2(gCal.gridWidth / size.number, gCal.gridHeight / size.number);
-            batch.draw(game.res.getChika1(), pos.x, pos.y, dimensions.x, dimensions.y);
+            batch.draw(game.res.getChika1(), pixels.x, pixels.y, dimensions.x, dimensions.y);
         }
     }
 

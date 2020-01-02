@@ -161,9 +161,6 @@ public final class Spawner implements GridSubscriber {
         }
 
         // TODO make a proper future proof spawning system that is not hardcoded
-//        howMuchToSpawn--;
-//        consumablesToSpawn = howMuchToSpawn - (short)1;
-//        chikasToSpawn
     }
 
     private void spawnBasedOnWeighting(short x, short y){

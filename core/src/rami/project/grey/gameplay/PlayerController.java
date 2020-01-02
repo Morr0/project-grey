@@ -3,8 +3,6 @@ package rami.project.grey.gameplay;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.core.entity.chika.BigChika;
-import rami.project.grey.core.entity.consumable.AttachmentStructure;
-import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.ui.screens.PlayerHud;
@@ -40,10 +38,9 @@ public final class PlayerController implements GridSubscriber {
     private ThrustingController thruster;
 
     // Properties of a game
-    private float scoreGain = 0;
-    private float score = 0;
+    private ScoreManager score;
 
-    public float getScore() { return score; }
+    public float getScore() { return score.get(); }
 
     // Coords
     public Vector2 gridPos;
@@ -67,11 +64,13 @@ public final class PlayerController implements GridSubscriber {
         this.currentSpeed = DEFAULT_VELOCITY;
 
         this.thruster = new ThrustingController(this);
+
+        this.score = new ScoreManager(this);
     }
 
     public void update(float dt){
         // SPEED REGULATION --- BEGIN ---
-        desiredSpeed = DEFAULT_VELOCITY;
+        desiredSpeed = stopped? 0: DEFAULT_VELOCITY;
 
         // Updates speed and acceleration depending on the thruster
         thruster.updateThrusting(dt);
@@ -81,22 +80,10 @@ public final class PlayerController implements GridSubscriber {
 
         currentSpeed += currentAccel * dt;
 
-        // To stop immediately
-        if (stopped)
-            currentSpeed = 0;
-
         // SPEED REGULATION --- END ---
 
-        // Score regulation  --- BEGIN ---
-
-        // Applying multipliers
-        scoreGain = stopped? STOPPED_SCORE_RATE: 1;
-        scoreGain *= dt;
-        scoreGain *= (float) (view.getTotalHealth()/view.getCurrentHealth());
-        scoreGain /= view.getNoTows() * view.getCurrentHealth() + 1;
-
-        score += scoreGain;
-        // Score regulation  --- END ---
+        // Score regulation
+        score.update();
 
         // Leave it till last
         bg.update(dt, currentSpeed);
@@ -126,7 +113,7 @@ public final class PlayerController implements GridSubscriber {
     }
 
     public void toggleStop(){
-        stopped = !stopped;
+        thruster.toggleStop();
     }
 
     public void toggleThruster(){
