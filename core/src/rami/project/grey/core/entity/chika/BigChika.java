@@ -86,7 +86,7 @@ public class BigChika extends Chika {
 
     // Determines whether can be towed or not
     private boolean canBeTowen(Chika potentialChild){
-        if (towes.peek().getSize().towWeight >= potentialChild.getSize().towWeight)
+        if (towes.peek().getSize().number >= potentialChild.getSize().number)
             return true;
 
         unsuccessfulTow(potentialChild, TowingReason.BIG_SIZE);
@@ -105,7 +105,7 @@ public class BigChika extends Chika {
 
     //  To be used whenever the
     private void updateTotalHealth(){
-        totalHealth = (short) (BASE_HEALTH * size.towWeight);
+        totalHealth = (short) (BASE_HEALTH * size.number);
         totalHealth *= (short) ((3 * getNoTows()/2) * BASE_HEALTH/(attachments.getNoUsed() + 1));
 
         for (IAttachable attachment: attachments.getUsedAttachments())
@@ -117,7 +117,7 @@ public class BigChika extends Chika {
     }
 
     private void updateTotalWeight(){
-        totalWeight = size.towWeight;
+        totalWeight = size.number;
         for (Chika chika: towes)
             totalWeight += chika.getWeight();
 

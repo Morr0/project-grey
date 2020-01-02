@@ -57,9 +57,8 @@ public final class PlayerController implements GridSubscriber {
         this.startingTime = System.currentTimeMillis();
 
         this.gridManager = gridManager;
-        this.gridManager.setPlayerAt(gridColumns / 2, gridColumns / 2, view);
-
         this.gridPos = new Vector2(gridColumns / 2, gridRows / 2);
+        this.gridManager.put((int) this.gridPos.x, (int) this.gridPos.y, view);
 
         this.gridManager.addSubscriber(this);
 
@@ -106,7 +105,7 @@ public final class PlayerController implements GridSubscriber {
 
     // TODO configure this so as the game lasts more the more able to spawn
     public byte getMaximumAllowableSpawns() {
-        return 0;
+        return 5;
     }
 
     // MOTION

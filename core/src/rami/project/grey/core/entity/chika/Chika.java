@@ -18,19 +18,34 @@ public class Chika implements ILiveable {
         LARGE((byte) 4, "Unchooky"),
         XLARGE((byte) 5, "Unter"); // This is the player size
 
-        // To be used to determine if a potential Chika can be towed or not
-        public final byte towWeight;
+        // Is a number to differentiate different chikas based on size, towing and etc...
+        public final byte number;
         protected String name;
 
-        ChikaSize(byte towWeight, String name){
-            this.towWeight = towWeight;
+        ChikaSize(byte number, String name){
+            this.number = number;
             this.name = name;
+        }
+
+        public static ChikaSize valueOf(byte num){
+            switch (num){
+                default: case 1:
+                    return XSMALL;
+                case 2:
+                    return SMALL;
+                case 3:
+                    return MEDIUM;
+                case 4:
+                    return LARGE;
+                case 5:
+                    return XLARGE;
+            }
         }
     }
 
     @Override
     public float getWeight() {
-        return size.towWeight;
+        return size.number;
     }
 
     // Size is set once
@@ -39,7 +54,7 @@ public class Chika implements ILiveable {
     public Chika(ChikaSize size){
         this.size = size;
 
-        this.totalHealth = (short) (BASE_HEALTH * size.towWeight);
+        this.totalHealth = (short) (BASE_HEALTH * size.number);
         this.currentHealth = totalHealth;
     }
 

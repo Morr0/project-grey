@@ -10,15 +10,12 @@ import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
 
 // TODO a certain IEntity must only touch one grid at a single time
 // To be used directly with the graphics
-public final class GridManager implements Spawner.SpawningNotifier {
+public final class GridManager {
     int columns, rows;
 
     private Grid[][] map;
     // This is used to decrease processing
     LinkedList<Grid> occupiedGrids;
-
-    // Level skipping and stuff
-    private boolean skippedLevel = false;
 
     // Subscribers
     private ArrayList<GridSubscriber> subscribers;
@@ -44,9 +41,6 @@ public final class GridManager implements Spawner.SpawningNotifier {
 
         this.subscribers = new ArrayList<>(2);
 
-        // Temporary spawn until
-        Thruster thruster = new Thruster(ThrusterType.BASIC);
-        put(0, 2, thruster);
     }
 
     public void addSubscriber(GridSubscriber sub){
@@ -58,6 +52,18 @@ public final class GridManager implements Spawner.SpawningNotifier {
 
         if (entity != null)
             occupiedGrids.add(map[locationX][locationY]);
+    }
+
+    public void removeCurrentNonPlayers(){
+        // The reason for iterators is to safely remove while iterating
+        Iterator<Grid> iterator = occupiedGrids.iterator();
+        while (iterator.hasNext()){
+            Grid grid = iterator.next();
+            if (!(grid.currentResider instanceof BigChika)){
+                map[grid.x][grid.y].currentResider = null;
+                iterator.remove();
+            }
+        }
     }
 
     public IEntity at(int locationX, int locationY){
@@ -74,18 +80,6 @@ public final class GridManager implements Spawner.SpawningNotifier {
 
     public boolean isEmptyAt(int locationX, int locationY){
         return map[locationX][locationY].currentResider == null;
-    }
-
-    public void setPlayerAt(int locationX, int locationY, IEntity entity){
-        map[locationX][locationY].currentResider = entity;
-    }
-
-    // Updating per frame
-    public void update(){
-        if (skippedLevel){
-            occupiedGrids.clear();
-            // TODO implement skipping later
-        }
     }
 
     // RELOCATION
@@ -113,7 +107,7 @@ public final class GridManager implements Spawner.SpawningNotifier {
             desiredY = 0;
         else if (desiredY >= rows){
             desiredY = 0;
-            skippedLevel = true;
+            skippedLevel();
         }
 
         // So that entities do not get stuck that way
@@ -130,7 +124,7 @@ public final class GridManager implements Spawner.SpawningNotifier {
 
         // For WalkedInBehind event
         try {
-            if (!skippedLevel && map[desiredX][desiredY + 1].currentResider != null)
+            if (map[desiredX][desiredY + 1].currentResider != null)
                 map[desiredX][desiredY + 1].currentResider.walkedInBehind(oldPos.currentResider);
         } catch (ArrayIndexOutOfBoundsException ex){Gdx.app.log("Game", " Exception");}
 
@@ -143,16 +137,14 @@ public final class GridManager implements Spawner.SpawningNotifier {
             notifySubscribers(map[desiredX][desiredY].currentResider, desiredX, desiredY);
     }
 
+    private void skippedLevel(){
+        removeCurrentNonPlayers();
+        for (GridSubscriber subscriber: subscribers)
+            subscriber.jumpedLevel();
+    }
+
     private void notifySubscribers(IEntity player, int newGridX, int newGridY){
         for (GridSubscriber subscriber: subscribers)
             subscriber.playerPosChanged(newGridX, newGridY);
-    }
-
-    // CALLBACK
-
-    @Override
-    public void spawnedAt(int gridX, int gridY, IEntity entity) {
-        map[gridX][gridY].currentResider = entity;
-        occupiedGrids.add(map[gridX][gridY]);
     }
 }

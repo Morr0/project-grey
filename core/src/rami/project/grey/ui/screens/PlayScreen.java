@@ -189,7 +189,8 @@ public class PlayScreen extends BaseScreen {
     private void drawChika(Chika chika, Vector2 pos){
         if (!chika.hasParent){
             Chika.ChikaSize size = chika.getSize();
-            Vector2 dimensions = new Vector2(gCal.gridWidth / size.towWeight, gCal.gridHeight / size.towWeight);
+            pos = gCal.getPixelPosFromGrid(pos);
+            Vector2 dimensions = new Vector2(gCal.gridWidth / size.number, gCal.gridHeight / size.number);
             batch.draw(game.res.getChika1(), pos.x, pos.y, dimensions.x, dimensions.y);
         }
     }

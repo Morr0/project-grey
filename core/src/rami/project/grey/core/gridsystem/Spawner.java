@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import rami.project.grey.core.entity.IEntity;
+import rami.project.grey.core.entity.chika.Chika;
+import rami.project.grey.core.entity.consumable.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
 
 public final class Spawner implements GridSubscriber {
     private GridManager gMan;
@@ -26,12 +29,10 @@ public final class Spawner implements GridSubscriber {
     private long spawningAtTime;
 
     // CURRENT LEVEL TRACKING
-    // The concept of level is more than just jumping out of the level but also after some time just in case the player didn't jump out
-    private boolean sameLevel = true;
-    private boolean allowSpawningOnSameLevel = false;
+    private boolean allowSpawning = false;
     // MUST BE MORE THAN THE COOLDOWN
     private static final short sameLevelToSpawnThreshold = BETWEEN_SPAWN_COOLDOWN + 3000; // milliseconds
-    private short currentlySpawned, howMuchSpawned;
+    private short currentlySpawned = 0;
 
     public Spawner(GridManager gMan, short maxAllowableSpawns, int playerX, int playerY) {
         this.gMan = gMan;
@@ -57,7 +58,7 @@ public final class Spawner implements GridSubscriber {
 
         // For when the player didn't jump out to allow to spawn again
         if ((System.currentTimeMillis() - lastSpawnedTime) >= sameLevelToSpawnThreshold){
-            allowSpawningOnSameLevel = true;
+            allowSpawning = true;
         }
     }
 
@@ -67,7 +68,7 @@ public final class Spawner implements GridSubscriber {
             if (currentlySpawned < maxAllowableSpawns){
 
                 // Checking if able to spawn whether is on same level or not
-                if (allowSpawningOnSameLevel || !sameLevel){
+                if (allowSpawning){
                     // Establish the time to spawn
                     spawningAtTime = System.currentTimeMillis() + numGen.nextInt(1000);
 
@@ -82,9 +83,10 @@ public final class Spawner implements GridSubscriber {
     private void spawn(){
         // Depending on the position of the player the spawning occurs on
         ArrayList<Vector2> locs = getSpawnableLocations();
-        if (locs == null)
+        if (locs == null) // To postpone the spawning because there is already enough spawned
             postponeSpawning();
         else {
+            // To know how much to spawn
             calculateWeightings();
 
             for (Vector2 loc: locs){
@@ -95,14 +97,14 @@ public final class Spawner implements GridSubscriber {
             lastSpawnedTime = System.currentTimeMillis();
             nextSpawningChance = System.currentTimeMillis() + BETWEEN_SPAWN_COOLDOWN;
 
-            if (allowSpawningOnSameLevel)
-                allowSpawningOnSameLevel = false;
+            if (allowSpawning)
+                allowSpawning = false;
         }
     }
 
     private ArrayList<Vector2> getSpawnableLocations(){
         short howMuchToSpawn = (short) (maxAllowableSpawns - currentlySpawned);
-        if (howMuchToSpawn <= 0)
+        if (howMuchToSpawn <= 0) // Since it can be negative
             return null;
 
         ArrayList<Vector2> locs = new ArrayList<>(numGen.nextInt(howMuchToSpawn));
@@ -112,8 +114,9 @@ public final class Spawner implements GridSubscriber {
 
         short counter = 0, x, y;
         while (counter < howMuchToSpawn){
-            x = (short) numGen.nextInt(gMan.columns + 1);
-            y = (short) numGen.nextInt(gMan.rows + 1);
+            // Random grid point
+            x = (short) numGen.nextInt(gMan.columns);
+            y = (short) numGen.nextInt(gMan.rows);
 
             // To know the state of looking for occupied grids
             boolean gotMatch = false;
@@ -135,31 +138,58 @@ public final class Spawner implements GridSubscriber {
         return locs;
     }
 
+    // Allocates a new spawning time
     private void postponeSpawning(){
-
+        // Random time to spawn in less than a second
+        nextSpawningChance = System.currentTimeMillis() + numGen.nextInt(1000);
     }
 
     // SPAWNING WEIGHTS
-    private short consumablesToSpawn;
-    private short chikasToSpawn;
-    private short enemiesToSpawn;
+    private short consumablesToSpawn = 0;
+    private short chikasToSpawn = 0;
+    private short enemiesToSpawn = 0;
 
     private void calculateWeightings(){
         short howMuchToSpawn = (short) (maxAllowableSpawns - currentlySpawned);
-//
-//        consumablesToSpawn = howMuchToSpawn - 1;
+
+        consumablesToSpawn = 1;
+        howMuchToSpawn--;
+
+        while (howMuchToSpawn > 0){
+            chikasToSpawn++;
+            howMuchToSpawn--;
+        }
+
+        // TODO make a proper future proof spawning system that is not hardcoded
+//        howMuchToSpawn--;
+//        consumablesToSpawn = howMuchToSpawn - (short)1;
 //        chikasToSpawn
     }
 
     private void spawnBasedOnWeighting(short x, short y){
+        // Spawn each type one after the other
 
-    }
+        if (consumablesToSpawn > 0){
+            // TODO make it so it spawns all types of consumables
+            gMan.put(x, y, new Thruster(ThrusterType.BASIC));
 
+            consumablesToSpawn--;
+            currentlySpawned++;
+        }
 
-    // NOTIFIER
+        if (chikasToSpawn > 0){
+            byte randomChikaSize = (byte) numGen.nextInt(Chika.ChikaSize.LARGE.number + 1);
+            gMan.put(x, y, new Chika(Chika.ChikaSize.valueOf(randomChikaSize)));
 
-    public interface SpawningNotifier {
-        void spawnedAt(int gridX, int gridY, IEntity entity);
+            chikasToSpawn--;
+            currentlySpawned++;
+        }
+
+        if (enemiesToSpawn > 0){
+
+            enemiesToSpawn--;
+            currentlySpawned++;
+        }
     }
 
     // GRID SUBSCRIBER
@@ -172,7 +202,8 @@ public final class Spawner implements GridSubscriber {
 
     @Override
     public void jumpedLevel() {
-        sameLevel = false;
-        nextSpawningChance = System.currentTimeMillis();
+        nextSpawningChance = System.currentTimeMillis() + numGen.nextInt(1000);
+
+        currentlySpawned = 0;
     }
 }
