@@ -11,7 +11,7 @@ class ThrustingController {
     private long targetBurstTimeEnd;
     // So that there is a cooldown
     private long targetBurstCooldownEnd;
-    private boolean currentlyThrusting = false;
+    boolean currentlyThrusting = false;
     float thrustAcceleration = 0f;
 
     ThrustingController(PlayerController c){

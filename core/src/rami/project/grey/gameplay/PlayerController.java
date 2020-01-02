@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
+import rami.project.grey.core.gridsystem.Spawner;
 import rami.project.grey.ui.screens.PlayerHud;
 import rami.project.grey.ui.screens.ScreenBackground;
 
@@ -16,11 +17,10 @@ public final class PlayerController implements GridSubscriber {
     private ScreenBackground bg;
     private PlayerHud hud;
     private Player player;
-    public BigChika view;
+    BigChika view;
     private GridManager gridManager;
+    Spawner spawner;
 
-    // CONSTANTS
-    public static final float STOPPED_SCORE_RATE = -0.86f;
 
     private static final float DEFAULT_VELOCITY = 125f;
 
@@ -37,12 +37,12 @@ public final class PlayerController implements GridSubscriber {
 
     private ThrustingController thruster;
 
-    // Properties of a game
+    // GAME PROPERTIES
     private ScoreManager score;
 
     public float getScore() { return score.get(); }
 
-    // Coords
+    // Player coordinates
     public Vector2 gridPos;
 
     public PlayerController(ScreenBackground bg, PlayerHud hud, int gridColumns, int gridRows, GridManager gridManager){
@@ -68,6 +68,12 @@ public final class PlayerController implements GridSubscriber {
         this.score = new ScoreManager(this);
     }
 
+    // BECAUSE OF THE NEED TO INIT THIS CLASS FIRST THEN SPAWNER
+    // TO BE CALLED FROM THE PLAYSCREEN
+    public void addSpawner(Spawner spawner){
+        this.spawner = spawner;
+    }
+
     public void update(float dt){
         // SPEED REGULATION --- BEGIN ---
         desiredSpeed = stopped? 0: DEFAULT_VELOCITY;
@@ -85,6 +91,18 @@ public final class PlayerController implements GridSubscriber {
         // Score regulation
         score.update();
 
+        // Entity management
+        if (thruster.currentlyThrusting) // TODO make it so that entities move by instead of suddenly disappearing and when he comes back from thrusting as well
+            gridManager.removeCurrentNonPlayers();
+
+        // Update spawner with current state
+        if (stopped)
+            spawner.stopped();
+        else if (thruster.currentlyThrusting)
+            spawner.stopped();
+        else
+            spawner.moving();
+
         // Leave it till last
         bg.update(dt, currentSpeed);
         hud.update(dt);
@@ -97,19 +115,23 @@ public final class PlayerController implements GridSubscriber {
 
     // MOTION
     public void moveUp(){
-        gridManager.moveTo((int) gridPos.x, (int) gridPos.y, 0, 1);
+        if (!thruster.currentlyThrusting)
+            gridManager.moveTo((int) gridPos.x, (int) gridPos.y, 0, 1);
     }
 
     public void moveDown(){
-        gridManager.moveTo((int) gridPos.x, (int) gridPos.y, 0, -1);
+        if (!thruster.currentlyThrusting)
+            gridManager.moveTo((int) gridPos.x, (int) gridPos.y, 0, -1);
     }
 
     public void moveRight(){
-        gridManager.moveTo((int) gridPos.x, (int) gridPos.y, 1, 0);
+        if (!thruster.currentlyThrusting)
+            gridManager.moveTo((int) gridPos.x, (int) gridPos.y, 1, 0);
     }
 
     public void moveLeft(){
-        gridManager.moveTo((int) gridPos.x, (int) gridPos.y, -1, 0);
+        if (!thruster.currentlyThrusting)
+            gridManager.moveTo((int) gridPos.x, (int) gridPos.y, -1, 0);
     }
 
     public void toggleStop(){
@@ -131,5 +153,12 @@ public final class PlayerController implements GridSubscriber {
     @Override
     public void jumpedLevel() {
 
+    }
+
+    // NOTIFIER FOR CHANGE OF PLAYER STATE FOR SPAWNER
+    public interface PlayerMotionState{
+        void stopped();
+        void moving();
+        void thrusting();
     }
 }

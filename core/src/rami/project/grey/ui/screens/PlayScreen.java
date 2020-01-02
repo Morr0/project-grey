@@ -70,6 +70,7 @@ public class PlayScreen extends BaseScreen {
         // Spawning
         spawner = new Spawner(gManager, controller.getMaximumAllowableSpawns(),
                 (int) controller.gridPos.x, (int)controller.gridPos.y);
+        controller.addSpawner(spawner);
     }
 
     /* ALL UNITS ARE IN GRID UNLESS SPECIFIED OTHERWISE */

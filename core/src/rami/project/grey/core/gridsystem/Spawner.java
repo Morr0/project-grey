@@ -9,8 +9,9 @@ import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
+import rami.project.grey.gameplay.PlayerController;
 
-public final class Spawner implements GridSubscriber {
+public final class Spawner implements GridSubscriber, PlayerController.PlayerMotionState {
     private GridManager gMan;
     private short maxAllowableSpawns;
 
@@ -64,15 +65,17 @@ public final class Spawner implements GridSubscriber {
 
     // Does all the checking to allow for spawning opportunities
     private boolean canSpawn(){
-        if (System.currentTimeMillis() >= nextSpawningChance){ // Checks if it passed the cooldown
-            if (currentlySpawned < maxAllowableSpawns){
+        if (playerReady){
+            if (System.currentTimeMillis() >= nextSpawningChance){ // Checks if it passed the cooldown
+                if (currentlySpawned < maxAllowableSpawns){
 
-                // Checking if able to spawn whether is on same level or not
-                if (allowSpawning){
-                    // Establish the time to spawn
-                    spawningAtTime = System.currentTimeMillis() + numGen.nextInt(1000);
+                    // Checking if able to spawn whether is on same level or not
+                    if (allowSpawning){
+                        // Establish the time to spawn
+                        spawningAtTime = System.currentTimeMillis() + numGen.nextInt(1000);
 
-                    return true;
+                        return true;
+                    }
                 }
             }
         }
@@ -202,5 +205,25 @@ public final class Spawner implements GridSubscriber {
         nextSpawningChance = System.currentTimeMillis() + numGen.nextInt(1000);
 
         currentlySpawned = 0;
+    }
+
+    // PLAYERCONTROLLER's callbacks
+
+    // To not always spawn but only when PlayerController is fine with spawning
+    private boolean playerReady = true;
+
+    @Override
+    public void stopped() {
+        playerReady = false;
+    }
+
+    @Override
+    public void moving() {
+        playerReady = true;
+    }
+
+    @Override
+    public void thrusting() {
+        playerReady = false;
     }
 }

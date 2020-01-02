@@ -5,6 +5,7 @@ import java.util.*;
 import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
+import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
 
@@ -61,9 +62,18 @@ public final class GridManager {
         Iterator<Grid> iterator = occupiedGrids.iterator();
         while (iterator.hasNext()){
             Grid grid = iterator.next();
-            if (!(grid.currentResider instanceof BigChika)){
-                map[grid.x][grid.y].currentResider = null;
-                iterator.remove();
+            if (grid.currentResider instanceof Chika){
+                { // To prevent removing Chikas that are towed to BigChika
+                    Chika chika = (Chika) grid.currentResider;
+                    if (chika.hasParent)
+                        continue;
+                }
+
+                // Remove every non towed entity
+                if (!(grid.currentResider instanceof BigChika)){
+                    map[grid.x][grid.y].currentResider = null;
+                    iterator.remove();
+                }
             }
         }
     }
