@@ -86,9 +86,6 @@ public class PlayScreen extends BaseScreen {
     @Override
     public void update(float dt) {
         controller.update(dt);
-        spawner.update();
-
-//        log("Tows: " + controller.view.getNoTows());
 
         // KEEP LAST
         camera.update();

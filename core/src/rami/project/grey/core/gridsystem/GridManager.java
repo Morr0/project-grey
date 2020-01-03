@@ -6,8 +6,6 @@ import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
-import rami.project.grey.core.entity.consumable.thruster.Thruster;
-import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
 
 // TODO a certain IEntity must only touch one grid at a single time
 // To be used directly with the graphics
@@ -42,8 +40,6 @@ public final class GridManager {
 
         this.subscribers = new ArrayList<>(2);
 
-        // Temporary thruster
-        put(4, 3, new Thruster(ThrusterType.BASIC));
     }
 
     public void addSubscriber(GridSubscriber sub){
@@ -68,12 +64,12 @@ public final class GridManager {
                     if (chika.hasParent)
                         continue;
                 }
+            }
 
-                // Remove every non towed entity
-                if (!(grid.currentResider instanceof BigChika)){
-                    map[grid.x][grid.y].currentResider = null;
-                    iterator.remove();
-                }
+            // Remove every non towed entity
+            if (!(grid.currentResider instanceof BigChika)){
+                map[grid.x][grid.y].currentResider = null;
+                iterator.remove();
             }
         }
     }
@@ -87,6 +83,10 @@ public final class GridManager {
         if (currentGrid.currentResider != null) {
             occupiedGrids.remove(currentGrid);
             map[locationX][locationY].currentResider = null;
+
+            // Notify subscribers
+            for (GridSubscriber subscriber: subscribers)
+                subscriber.removedEntity();
         }
     }
 

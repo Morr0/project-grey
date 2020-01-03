@@ -1,17 +1,18 @@
 package rami.project.grey.core.gridsystem;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
 import rami.project.grey.gameplay.PlayerController;
 
 public final class Spawner implements GridSubscriber, PlayerController.PlayerMotionState {
+
     private GridManager gMan;
     private short maxAllowableSpawns;
 
@@ -25,14 +26,12 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
     private long lastSpawnedTime = 0; // 0 indicates nothing spawned yet
     // Primitive cooldown between spawns in milliseconds
     private static final short BETWEEN_SPAWN_COOLDOWN = 2000;
-    private long nextSpawningChance;
-    // To be used after finishing the spawning cooldown and is generated randomly between 0 and 1000
-    private long spawningAtTime;
+    private long nextSpawningChance = spawningThresholdTime;
 
     // CURRENT LEVEL TRACKING
     private boolean allowSpawning = false;
     // MUST BE MORE THAN THE COOLDOWN
-    private static final short sameLevelToSpawnThreshold = BETWEEN_SPAWN_COOLDOWN + 3000; // milliseconds
+    private static final short spawningThresholdTime = BETWEEN_SPAWN_COOLDOWN + 1000; // milliseconds
     private short currentlySpawned = 0;
 
     public Spawner(GridManager gMan, short maxAllowableSpawns, int playerX, int playerY) {
@@ -49,7 +48,8 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
 
     // To be updated with the update loop
     public void update(){
-        if (canSpawn() && (System.currentTimeMillis() >= spawningAtTime)){
+        Gdx.app.log("Game", "Currently spawned: " + currentlySpawned);
+        if (canSpawn()){
             spawn();
 
             // KEEP IT LAST
@@ -57,8 +57,8 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
             return;
         }
 
-        // For when the player didn't jump out to allow to spawn again
-        if ((System.currentTimeMillis() - lastSpawnedTime) >= sameLevelToSpawnThreshold){
+        // To set whether to spawn or not
+        if ((System.currentTimeMillis() - lastSpawnedTime) >= spawningThresholdTime){
             allowSpawning = true;
         }
     }
@@ -69,10 +69,8 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
             if (System.currentTimeMillis() >= nextSpawningChance){ // Checks if it passed the cooldown
                 if (currentlySpawned < maxAllowableSpawns){
 
-                    // Checking if able to spawn whether is on same level or not
                     if (allowSpawning){
                         // Establish the time to spawn
-                        spawningAtTime = System.currentTimeMillis() + numGen.nextInt(1000);
 
                         return true;
                     }
@@ -172,9 +170,9 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
         if (consumablesToSpawn > 0){
             // TODO make it so it spawns all types of consumables
             gMan.put(x, y, new Thruster(ThrusterType.BASIC));
-
             consumablesToSpawn--;
             currentlySpawned++;
+            return;
         }
 
         if (chikasToSpawn > 0){
@@ -183,12 +181,14 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
 
             chikasToSpawn--;
             currentlySpawned++;
+            return;
         }
 
         if (enemiesToSpawn > 0){
 
             enemiesToSpawn--;
             currentlySpawned++;
+            return;
         }
     }
 
@@ -202,9 +202,15 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
 
     @Override
     public void jumpedLevel() {
-        nextSpawningChance = System.currentTimeMillis() + numGen.nextInt(1000);
+        postponeSpawning();
 
         currentlySpawned = 0;
+    }
+
+    @Override
+    public void removedEntity() {
+        // Since this gets called whenever ONE entity gets removed from the OccupiedGrids count
+        currentlySpawned--;
     }
 
     // PLAYERCONTROLLER's callbacks
@@ -225,5 +231,6 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
     @Override
     public void thrusting() {
         playerReady = false;
+        currentlySpawned = 0;
     }
 }

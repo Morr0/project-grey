@@ -1,5 +1,6 @@
 package rami.project.grey.gameplay;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.core.entity.chika.BigChika;
@@ -95,13 +96,16 @@ public final class PlayerController implements GridSubscriber {
         if (thruster.currentlyThrusting) // TODO make it so that entities move by instead of suddenly disappearing and when he comes back from thrusting as well
             gridManager.removeCurrentNonPlayers();
 
-        // Update spawner with current state
+        // SPAWNER --- BEGIN ---
         if (stopped)
             spawner.stopped();
         else if (thruster.currentlyThrusting)
-            spawner.stopped();
+            spawner.thrusting();
         else
             spawner.moving();
+
+        spawner.update();
+        // SPAWNER --- END ---
 
         // Leave it till last
         bg.update(dt, currentSpeed);
