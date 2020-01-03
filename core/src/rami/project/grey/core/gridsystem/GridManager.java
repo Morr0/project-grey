@@ -143,6 +143,7 @@ public final class GridManager {
         // The actual moving
         map[desiredX][desiredY].currentResider = map[oldX][oldY].currentResider;
         map[oldX][oldY].currentResider = null;
+//        removeAt(oldX, oldY);
         occupiedGrids.add(map[desiredX][desiredY]); // Since the reference gets deleted
 
         // Notifying subscribers

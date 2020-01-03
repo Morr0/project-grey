@@ -3,10 +3,13 @@ package rami.project.grey.core.entity.chika;
 import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.consumable.AttachmentStructure;
 import rami.project.grey.core.entity.consumable.IAttachable;
+import rami.project.grey.gameplay.PlayerController;
 
 import java.util.Stack;
 
 public class BigChika extends Chika {
+
+    PlayerController controller;
 
     private float totalWeight;
 
@@ -28,6 +31,10 @@ public class BigChika extends Chika {
 
         // KEEP IT CALLED AFTER THE ATTACHMENTS CODE
         updateTotalWeight();
+    }
+
+    public void addController(PlayerController controller){
+        this.controller = controller;
     }
 
     public int getNoTows(){

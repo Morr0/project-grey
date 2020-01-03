@@ -94,7 +94,10 @@ public class Chika implements ILiveable {
 
     @Override
     public void walkedIn(IEntity walker) {
-
+        if (walker instanceof BigChika){
+            BigChika player = (BigChika) walker;
+            player.controller.walkedIn(this);
+        }
     }
 
     @Override

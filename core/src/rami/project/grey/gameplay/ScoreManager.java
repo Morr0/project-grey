@@ -28,4 +28,16 @@ final class ScoreManager {
     float get(){
         return currentScore;
     }
+
+    enum Penalty {
+        PLAYER_WALKED_IN_CHIKA;
+    }
+
+    void deduct(Penalty penalty, byte number){
+        switch (penalty){
+            case PLAYER_WALKED_IN_CHIKA:
+                currentScore -= 100 * number;
+                break;
+        }
+    }
 }

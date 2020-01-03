@@ -1,9 +1,10 @@
 package rami.project.grey.gameplay;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
+import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
+import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -51,6 +52,7 @@ public final class PlayerController implements GridSubscriber {
         this.hud = hud;
         this.player = new Player();
         this.view = new BigChika(player.maxAllowableTowes(), player.maxAllowableAttachments());
+        this.view.addController(this);
 
         this.startingTime = System.currentTimeMillis();
 
@@ -159,10 +161,23 @@ public final class PlayerController implements GridSubscriber {
 
     }
 
+    @Override
+    public void removedEntity() {
+
+    }
+
     // NOTIFIER FOR CHANGE OF PLAYER STATE FOR SPAWNER
     public interface PlayerMotionState{
         void stopped();
         void moving();
         void thrusting();
+    }
+
+    // BigChika callbacks
+    public void walkedIn(IEntity victimE){
+        if (victimE instanceof Chika){ // Deducts score as a result of walking into a friendly Chika
+            Chika victim = (Chika) victimE;
+            score.deduct(ScoreManager.Penalty.PLAYER_WALKED_IN_CHIKA, victim.getSize().number);
+        }
     }
 }
