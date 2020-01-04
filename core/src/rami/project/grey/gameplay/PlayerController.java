@@ -18,10 +18,11 @@ import rami.project.grey.ui.screens.ScreenBackground;
 public final class PlayerController implements GridSubscriber {
     private ScreenBackground bg;
     private PlayerHud hud;
-    private Player player;
+    public Player player;
     BigChika view;
     private GridManager gridManager;
     Spawner spawner;
+    XPHandler xp;
 
 
     private static final float DEFAULT_VELOCITY = 125f;
@@ -62,6 +63,8 @@ public final class PlayerController implements GridSubscriber {
 
         this.gridManager.addSubscriber(this);
 
+        this.xp = new XPHandler(player);
+
         // Defaults
         this.desiredSpeed = DEFAULT_VELOCITY;
         this.currentSpeed = DEFAULT_VELOCITY;
@@ -78,6 +81,7 @@ public final class PlayerController implements GridSubscriber {
     }
 
     public void update(float dt){
+        xp.rewardXp(XPHandler.ActionReward.ENEMY_KILL);
         // SPEED REGULATION --- BEGIN ---
         desiredSpeed = stopped? 0: DEFAULT_VELOCITY;
 
@@ -112,6 +116,15 @@ public final class PlayerController implements GridSubscriber {
         // Leave it till last
         bg.update(dt, currentSpeed);
         hud.update(dt);
+    }
+
+    public void endGame(){
+
+        // Clear up all stuff
+        xp.flush();
+
+        // this is the last to be called
+        player.prefs.flush();
     }
 
     // TODO configure this so as the game lasts more the more able to spawn

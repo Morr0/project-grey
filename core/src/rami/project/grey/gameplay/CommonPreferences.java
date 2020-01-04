@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
 import java.util.HashMap;
+import java.util.Map;
 
 final class CommonPreferences {
     // Pref Categories
@@ -85,6 +86,14 @@ final class CommonPreferences {
     float getFloat(String prefCategory, String name, float defaultValueIfDoesNotExist){
         Preferences preferences = this.prefs.get(prefCategory);
         return preferences.getFloat(name, defaultValueIfDoesNotExist);
+    }
+
+    // Saves data
+    void flush(){
+        for (Map.Entry<String, Preferences> entry: prefs.entrySet()){
+            Preferences preferences = entry.getValue();
+            preferences.flush();
+        }
     }
 
 }

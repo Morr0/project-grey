@@ -23,6 +23,13 @@ public final class Player {
         return prefs.getFloat(CommonPreferences.GENERAL_PREFERENCES, NameRegistery.PPLAYER_CASH, NameRegistery.PLAYER_CASH_STARTING);
     }
 
+    public int getCurrentXPLevel(){
+        double factor = -Math.log10(0.0000000002d)/10;
+        double level = factor * prefs.getLong(CommonPreferences.GENERAL_PREFERENCES,
+                XPHandler.XP, 0);
+        return (int) Math.floor(level);
+    }
+
     /**
      * Increments or decrements by the amount given
      */

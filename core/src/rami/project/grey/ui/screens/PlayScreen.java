@@ -87,6 +87,8 @@ public class PlayScreen extends BaseScreen {
     public void update(float dt) {
         controller.update(dt);
 
+        log("XP: " + controller.player.getCurrentXPLevel());
+
         // KEEP LAST
         camera.update();
     }
@@ -110,6 +112,7 @@ public class PlayScreen extends BaseScreen {
     @Override
     public void dispose() {
         super.dispose();
+        controller.endGame();
         batch.dispose();
     }
 
