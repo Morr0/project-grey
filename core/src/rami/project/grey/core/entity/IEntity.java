@@ -11,6 +11,11 @@ public interface IEntity {
      * */
     String getName();
 
+    /**
+     * For the inventory system.
+     * */
+    boolean isItem();
+
     float getWeight();
 
     // INTERACTION CALLBACKS
@@ -21,11 +26,15 @@ public interface IEntity {
 
     /**
      * Describes an IEntity have moved into a specific grid (i.e. walked on it)
+     *
+     * @return if false, the walker cannot walked into the entity
      * */
-    void walkedIn(IEntity walker);
+    boolean walkedIn(IEntity walker);
 
     /**
      * Describes an IEntity walked and is currently behind the called entity
+     *
+     * @return if false, the walker cannot walk in behind the entity
      * */
-    void walkedInBehind(IEntity walker);
+    boolean walkedInBehind(IEntity walker);
 }

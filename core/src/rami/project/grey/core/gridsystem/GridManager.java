@@ -39,7 +39,6 @@ public final class GridManager {
         this.occupiedGrids = new LinkedList<>();
 
         this.subscribers = new ArrayList<>(2);
-
     }
 
     public void addSubscriber(GridSubscriber sub){
@@ -131,8 +130,9 @@ public final class GridManager {
         Grid newPos = map[desiredX][desiredY];
 
         // For WalkedIn event
-        if (newPos.currentResider != null)
+        if (newPos.currentResider != null){
             newPos.currentResider.walkedIn(oldPos.currentResider);
+        }
 
         // For WalkedInBehind event
         try {

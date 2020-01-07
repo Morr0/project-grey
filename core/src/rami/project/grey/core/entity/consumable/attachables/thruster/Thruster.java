@@ -1,10 +1,11 @@
-package rami.project.grey.core.entity.consumable.thruster;
+package rami.project.grey.core.entity.consumable.attachables.thruster;
 
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
-import rami.project.grey.core.entity.consumable.IAttachable;
+import rami.project.grey.core.entity.consumable.attachables.IAttachable;
+import rami.project.grey.core.item.Item;
 
-public final class Thruster implements IAttachable {
+public final class Thruster extends Item implements IAttachable {
 
     ThrusterType type;
 
@@ -35,7 +36,12 @@ public final class Thruster implements IAttachable {
 
     @Override
     public String getName() {
-        return null;
+        return type.toString();
+    }
+
+    @Override
+    public boolean isItem() {
+        return true;
     }
 
     @Override
@@ -54,17 +60,51 @@ public final class Thruster implements IAttachable {
     }
 
     @Override
-    public void walkedIn(IEntity walker) {
+    public boolean walkedIn(IEntity walker) {
         if (walker instanceof BigChika){
             BigChika chika = (BigChika) walker;
 
             chika.attach(this);
             isAttached = true;
+
+            chika.addItem(this);
         }
+
+        return true;
     }
 
     @Override
-    public void walkedInBehind(IEntity walker) {
+    public boolean walkedInBehind(IEntity walker) {
+        return true;
+    }
 
+    @Override
+    public ItemType getType() {
+        return ItemType.ATTACHABLE_THRUSTER_STANDARD;
+    }
+
+    @Override
+    public boolean isStackable() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeConsumed() {
+        return true;
+    }
+
+    @Override
+    public void consume() {
+
+    }
+
+    @Override
+    public boolean inGameUsable() {
+        return true;
+    }
+
+    @Override
+    public int stackingLimit() {
+        return 1;
     }
 }

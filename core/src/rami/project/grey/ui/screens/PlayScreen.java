@@ -8,11 +8,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.Game;
-import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
-import rami.project.grey.core.entity.consumable.IAttachable;
-import rami.project.grey.core.entity.consumable.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.attachables.IAttachable;
+import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -87,7 +86,7 @@ public class PlayScreen extends BaseScreen {
     public void update(float dt) {
         controller.update(dt);
 
-        log("XP: " + controller.player.getCurrentXPLevel());
+        log("Total items: " + controller.inventory.totalItems());
 
         // KEEP LAST
         camera.update();

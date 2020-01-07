@@ -1,4 +1,6 @@
-package rami.project.grey.core.entity.consumable.thruster;
+package rami.project.grey.core.entity.consumable.attachables.thruster;
+
+import rami.project.grey.core.item.ItemNameRegistry;
 
 // Time is in milliseconds
 public enum ThrusterType {
@@ -19,5 +21,14 @@ public enum ThrusterType {
         this.ACCEL_MULTIPLIER = ACCEL_MULTIPLIER;
         this.BURST_TIME = BURST_TIME;
         this.BURST_COOLDOWN = BURST_COOLDOWN;
+    }
+
+
+    @Override
+    public String toString() {
+        switch (this){
+            default: case BASIC:
+                return ItemNameRegistry.THRUSTER_STANDARD;
+        }
     }
 }

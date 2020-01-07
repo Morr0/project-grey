@@ -1,7 +1,7 @@
 package rami.project.grey.gameplay;
 
-import rami.project.grey.core.entity.consumable.AttachmentStructure;
-import rami.project.grey.core.entity.consumable.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.attachables.AttachmentStructure;
+import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 
 // This is to control the thrusting code in order to relieve some pain of the PlayerController
 class ThrustingController {

@@ -1,6 +1,6 @@
-package rami.project.grey.core.entity.consumable;
+package rami.project.grey.core.entity.consumable.attachables;
 
-import rami.project.grey.core.entity.consumable.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 
 import java.util.ArrayList;
 

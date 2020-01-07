@@ -16,4 +16,8 @@ public final class NameRegistery {
     public static final float PLAYER_CASH_STARTING = 500f;
 
     // MAX VALUES
+
+
+
+    // ITEMS
 }

@@ -1,8 +1,10 @@
 package rami.project.grey.core.entity.chika;
 
 import com.badlogic.gdx.Gdx;
-import rami.project.grey.core.entity.consumable.AttachmentStructure;
-import rami.project.grey.core.entity.consumable.IAttachable;
+import rami.project.grey.core.entity.consumable.attachables.AttachmentStructure;
+import rami.project.grey.core.entity.consumable.attachables.IAttachable;
+import rami.project.grey.core.item.Item;
+import rami.project.grey.core.item.ItemInventory;
 import rami.project.grey.gameplay.PlayerController;
 
 import java.util.Stack;
@@ -10,6 +12,7 @@ import java.util.Stack;
 public class BigChika extends Chika {
 
     PlayerController controller;
+    private ItemInventory inventory;
 
     private float totalWeight;
 
@@ -22,8 +25,10 @@ public class BigChika extends Chika {
     // Attachments
     public AttachmentStructure attachments;
 
-    public BigChika(byte maxAllowableTowes, byte maxAllowableAttachments) {
+    public BigChika(ItemInventory inventory, byte maxAllowableTowes, byte maxAllowableAttachments) {
         super(ChikaSize.XLARGE);
+
+        this.inventory = inventory;
         this.maxTows = maxAllowableTowes;
 
         towes = new Stack<>();
@@ -31,6 +36,10 @@ public class BigChika extends Chika {
 
         // KEEP IT CALLED AFTER THE ATTACHMENTS CODE
         updateTotalWeight();
+    }
+
+    public void addItem(Item item){
+        inventory.addItem(item);
     }
 
     public void addController(PlayerController controller){

@@ -69,6 +69,11 @@ public class Chika implements ILiveable {
         return size.name;
     }
 
+    @Override
+    public boolean isItem() {
+        return false;
+    }
+
     // ILiveable
     protected short totalHealth;
     protected short currentHealth;
@@ -93,18 +98,22 @@ public class Chika implements ILiveable {
     }
 
     @Override
-    public void walkedIn(IEntity walker) {
+    public boolean walkedIn(IEntity walker) {
         if (walker instanceof BigChika){
             BigChika player = (BigChika) walker;
             player.controller.walkedIn(this);
         }
+
+        return true;
     }
 
     @Override
-    public void walkedInBehind(IEntity walker) {
+    public boolean walkedInBehind(IEntity walker) {
         if (walker instanceof BigChika){
             BigChika bigChika = (BigChika) walker;
             bigChika.tow(this);
         }
+
+        return true;
     }
 }

@@ -1,14 +1,13 @@
 package rami.project.grey.core.gridsystem;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import rami.project.grey.core.entity.chika.Chika;
-import rami.project.grey.core.entity.consumable.thruster.Thruster;
-import rami.project.grey.core.entity.consumable.thruster.ThrusterType;
+import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.attachables.thruster.ThrusterType;
 import rami.project.grey.gameplay.PlayerController;
 
 public final class Spawner implements GridSubscriber, PlayerController.PlayerMotionState {
@@ -48,7 +47,6 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
 
     // To be updated with the update loop
     public void update(){
-        Gdx.app.log("Game", "Currently spawned: " + currentlySpawned);
         if (canSpawn()){
             spawn();
 

@@ -17,7 +17,7 @@ public final class ResourcesManager {
 
         // List to be loaded
         assetManager.load("Background-Testing.jpg", Texture.class);
-        assetManager.load("Chika/Chika1-1.png", Texture.class);
+        assetManager.load("Chika/Chika1-1.jpg", Texture.class);
 
         assetManager.update();
     }
@@ -27,7 +27,7 @@ public final class ResourcesManager {
         // ASSETS TO BE LOADED
         // Textures
         textures.put("Background", assetManager.get("Background-Testing.jpg", Texture.class));
-        textures.put("Chika1-1", assetManager.get("Chika/Chika1-1.png", Texture.class));
+        textures.put("Chika1-1", assetManager.get("Chika/Chika1-1.jpg", Texture.class));
     }
 
     public Texture getBackground(){

@@ -1,11 +1,14 @@
 package rami.project.grey.gameplay;
 
 import rami.project.grey.core.NameRegistery;
+import rami.project.grey.core.item.ItemInventory;
 
 // TODO use name registery
 public final class Player {
-//    private CommonPreferences prefs;
     CommonPreferences prefs;
+
+    // CONSTANS
+    private static final String GENERAL_PREFS_HAS_INVENTORY = "general-has-inventory";
 
     Player() {
         prefs = new CommonPreferences();
@@ -44,4 +47,16 @@ public final class Player {
     }
 
     byte maxAllowableAttachments(){ return 2; }
+
+    ItemInventory getPlayerInventory(){
+        if (!prefs.getBoolean(CommonPreferences.GENERAL_PREFERENCES, GENERAL_PREFS_HAS_INVENTORY, false)){
+            // Tell inventory it has one
+            prefs.putBoolean(CommonPreferences.GENERAL_PREFERENCES, GENERAL_PREFS_HAS_INVENTORY, true);
+
+            return new ItemInventory();
+        } else {
+            // TODO retrieve the inventory from storage
+            return new ItemInventory();
+        }
+    }
 }

@@ -8,6 +8,7 @@ import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.core.gridsystem.Spawner;
+import rami.project.grey.core.item.ItemInventory;
 import rami.project.grey.ui.screens.PlayerHud;
 import rami.project.grey.ui.screens.ScreenBackground;
 
@@ -19,10 +20,13 @@ public final class PlayerController implements GridSubscriber {
     private ScreenBackground bg;
     private PlayerHud hud;
     public Player player;
+    public ItemInventory inventory;
     BigChika view;
     private GridManager gridManager;
     Spawner spawner;
     XPHandler xp;
+
+
 
 
     private static final float DEFAULT_VELOCITY = 125f;
@@ -52,7 +56,8 @@ public final class PlayerController implements GridSubscriber {
         this.bg = bg;
         this.hud = hud;
         this.player = new Player();
-        this.view = new BigChika(player.maxAllowableTowes(), player.maxAllowableAttachments());
+        this.inventory = player.getPlayerInventory();
+        this.view = new BigChika(inventory, player.maxAllowableTowes(), player.maxAllowableAttachments());
         this.view.addController(this);
 
         this.startingTime = System.currentTimeMillis();
@@ -122,6 +127,8 @@ public final class PlayerController implements GridSubscriber {
 
         // Clear up all stuff
         xp.flush();
+
+        // TODO take care of storing the items
 
         // this is the last to be called
         player.prefs.flush();
