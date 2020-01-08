@@ -11,7 +11,7 @@ import java.util.Stack;
 
 public class BigChika extends Chika {
 
-    PlayerController controller;
+    public PlayerController controller;
     private ItemInventory inventory;
 
     private float totalWeight;
@@ -36,10 +36,6 @@ public class BigChika extends Chika {
 
         // KEEP IT CALLED AFTER THE ATTACHMENTS CODE
         updateTotalWeight();
-    }
-
-    public void addItem(Item item){
-        inventory.addItem(item);
     }
 
     public void addController(PlayerController controller){

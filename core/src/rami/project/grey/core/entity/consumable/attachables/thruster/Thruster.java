@@ -67,7 +67,7 @@ public final class Thruster extends Item implements IAttachable {
             chika.attach(this);
             isAttached = true;
 
-            chika.addItem(this);
+            chika.controller.inventory.addItem(this);
         }
 
         return true;

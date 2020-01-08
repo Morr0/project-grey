@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
+import rami.project.grey.core.entity.consumable.loot.StandardCoin;
 
 // TODO a certain IEntity must only touch one grid at a single time
 // To be used directly with the graphics
@@ -39,6 +40,9 @@ public final class GridManager {
         this.occupiedGrids = new LinkedList<>();
 
         this.subscribers = new ArrayList<>(2);
+
+        // TEMPORARY
+        put(1,1, new StandardCoin());
     }
 
     public void addSubscriber(GridSubscriber sub){

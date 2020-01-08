@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
+import rami.project.grey.core.entity.consumable.loot.StandardCoin;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -133,6 +134,16 @@ public final class PlayerController implements GridSubscriber {
         // this is the last to be called
         player.prefs.flush();
     }
+
+    // PUBLIC METHODS
+
+    public <T extends IEntity> void interact(T interactor){
+        if (interactor instanceof StandardCoin){
+            score.add(((StandardCoin) interactor).getAward());
+        }
+    }
+
+    //
 
     // TODO configure this so as the game lasts more the more able to spawn
     public byte getMaximumAllowableSpawns() {

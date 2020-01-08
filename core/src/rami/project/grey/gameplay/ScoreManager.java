@@ -40,4 +40,8 @@ final class ScoreManager {
                 break;
         }
     }
+
+    public void add(short amount){
+        currentScore += amount;
+    }
 }

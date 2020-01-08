@@ -21,18 +21,22 @@ public final class ItemInventory {
     public void addItem(Item item){
         // Searches if exists else will add a new ItemHolder downstairs
         for (ItemHolder holder: totalItemHolders){
-            if (holder.getItem().getType() == item.getType()){
-                if (item.isStackable() )
-                holder.count++;
-                return;
+            if (holder.getItem().getType() == item.getType()){ // Checks if same type
+                if (item.isStackable()){ // Ensures to only add stackable items
+                    if (holder.count < item.stackingLimit()){ // Ensures to not add more than stacking limit
+                        holder.count++;
+                        return;
+                    }
+                }
             }
         }
 
+        // Just adds a new holder to the system
         totalItemHolders.add(new ItemHolder(item, 1));
     }
 
     // ASSUMES THE ITEM EXISTS
-    public void consumeItem(Item item){
+    public void useItem(Item item){
         Iterator<ItemHolder> iterator = totalItemHolders.iterator();
         while (iterator.hasNext()){
             ItemHolder holder = iterator.next();

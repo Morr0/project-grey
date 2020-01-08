@@ -12,6 +12,7 @@ import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.loot.ILoot;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -176,12 +177,18 @@ public class PlayScreen extends BaseScreen {
             drawChika((Chika) grid.currentResider, pixelPos);
         else if (grid.currentResider instanceof IAttachable)
             drawAttachments((IAttachable) grid.currentResider, pixelPos);
+        else if (grid.currentResider instanceof ILoot)
+            drawLoot((ILoot) grid.currentResider, pixelPos);
     }
 
     private void drawAttachments(IAttachable attachment, Vector2 pixels){
         if (attachment instanceof Thruster){
             batch.draw(game.res.getBackground(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
         }
+    }
+
+    private void drawLoot(ILoot loot, Vector2 pixels){
+        batch.draw(game.res.getCoin(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
     }
 
     // This relays all attached towes to not be drawn by this but from the parent

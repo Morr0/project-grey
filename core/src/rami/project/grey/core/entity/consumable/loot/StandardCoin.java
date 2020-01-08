@@ -1,10 +1,11 @@
 package rami.project.grey.core.entity.consumable.loot;
 
+import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.item.Item;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.item.ItemNameRegistry;
 
-public class StandardCoin extends Item implements IEntity {
+public class StandardCoin extends Item implements IEntity, ILoot {
     @Override
     public boolean isItem() {
         return true;
@@ -22,6 +23,11 @@ public class StandardCoin extends Item implements IEntity {
 
     @Override
     public boolean walkedIn(IEntity walker) {
+        if (walker instanceof BigChika){
+            BigChika chika = (BigChika) walker;
+            chika.controller.interact(this);
+        }
+
         return true;
     }
 
@@ -63,5 +69,10 @@ public class StandardCoin extends Item implements IEntity {
     @Override
     public ItemType getType() {
         return null;
+    }
+
+    @Override
+    public short getAward(){
+        return 500;
     }
 }

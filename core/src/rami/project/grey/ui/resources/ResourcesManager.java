@@ -18,6 +18,7 @@ public final class ResourcesManager {
         // List to be loaded
         assetManager.load("Background-Testing.jpg", Texture.class);
         assetManager.load("Chika/Chika1-1.jpg", Texture.class);
+        assetManager.load("Loot/Coin/Standard_Coin.jpeg", Texture.class);
 
         assetManager.update();
     }
@@ -28,6 +29,7 @@ public final class ResourcesManager {
         // Textures
         textures.put("Background", assetManager.get("Background-Testing.jpg", Texture.class));
         textures.put("Chika1-1", assetManager.get("Chika/Chika1-1.jpg", Texture.class));
+        textures.put("Standard_Coin", assetManager.get("Loot/Coin/Standard_Coin.jpeg", Texture.class));
     }
 
     public Texture getBackground(){
@@ -40,6 +42,10 @@ public final class ResourcesManager {
 
     public Texture getChika1(){
         return textures.get("Chika1-1");
+    }
+
+    public Texture getCoin(){
+        return textures.get("Standard_Coin");
     }
 
     public void dispose(){
