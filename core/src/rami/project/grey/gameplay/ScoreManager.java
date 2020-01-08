@@ -15,8 +15,8 @@ final class ScoreManager {
     // Don't take in dt as it will make scoring more on better devices
     void update(){
         scoreGain = c.stopped? STOPPED_SCORE_RATE: 1;
-        scoreGain *= (float) (c.view.getTotalHealth()/c.view.getCurrentHealth());
-        scoreGain /= c.view.getNoTows() * c.view.getCurrentHealth() + 1;
+        scoreGain *= (float) (c.bigChika.getTotalHealth()/c.bigChika.getCurrentHealth());
+        scoreGain /= c.bigChika.getNoTows() * c.bigChika.getCurrentHealth() + 1;
 
         currentScore += scoreGain;
 

@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.Game;
+import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.loot.ILoot;
+import rami.project.grey.core.entity.enemy.IEnemy;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -163,7 +165,8 @@ public class PlayScreen extends BaseScreen {
 
     @Override
     protected void clicked(int screenX, int screenY, float elaspedMillisSeconds) {
-
+        Vector2 grids = gCal.getGridPosFromPixel(screenX, screenY);
+        gManager.touchedAt(grids, controller.bigChika);
     }
 
     // ---------------------- UTILS ----------------------
@@ -179,6 +182,8 @@ public class PlayScreen extends BaseScreen {
             drawAttachments((IAttachable) grid.currentResider, pixelPos);
         else if (grid.currentResider instanceof ILoot)
             drawLoot((ILoot) grid.currentResider, pixelPos);
+        else if (grid.currentResider instanceof IEnemy)
+            drawEnemy((IEnemy) grid.currentResider, pixelPos);
     }
 
     private void drawAttachments(IAttachable attachment, Vector2 pixels){
@@ -188,6 +193,10 @@ public class PlayScreen extends BaseScreen {
     }
 
     private void drawLoot(ILoot loot, Vector2 pixels){
+        batch.draw(game.res.getCoin(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
+    }
+
+    private void drawEnemy(IEnemy enemy, Vector2 pixels){
         batch.draw(game.res.getCoin(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
     }
 

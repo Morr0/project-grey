@@ -3,7 +3,6 @@ package rami.project.grey.core.entity.chika;
 import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.consumable.attachables.AttachmentStructure;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
-import rami.project.grey.core.item.Item;
 import rami.project.grey.core.item.ItemInventory;
 import rami.project.grey.gameplay.PlayerController;
 

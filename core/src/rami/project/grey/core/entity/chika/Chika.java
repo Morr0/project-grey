@@ -11,7 +11,7 @@ public class Chika implements ILiveable {
     public boolean hasParent = false;
     BigChika parent = null;
 
-    public enum ChikaSize{ // TODO handle translation
+    public enum ChikaSize { // TODO handle translation
         XSMALL((byte) 1, "Nene"),
         SMALL((byte) 2, "Nunu"),
         MEDIUM((byte) 3, "Checknoon"),
@@ -22,14 +22,15 @@ public class Chika implements ILiveable {
         public final byte number;
         protected String name;
 
-        ChikaSize(byte number, String name){
+        ChikaSize(byte number, String name) {
             this.number = number;
             this.name = name;
         }
 
-        public static ChikaSize valueOf(byte num){
-            switch (num){
-                default: case 1:
+        public static ChikaSize valueOf(byte num) {
+            switch (num) {
+                default:
+                case 1:
                     return XSMALL;
                 case 2:
                     return SMALL;
@@ -51,14 +52,14 @@ public class Chika implements ILiveable {
     // Size is set once
     protected ChikaSize size;
 
-    public Chika(ChikaSize size){
+    public Chika(ChikaSize size) {
         this.size = size;
 
         this.totalHealth = (short) (BASE_HEALTH * size.number);
         this.currentHealth = totalHealth;
     }
 
-    public ChikaSize getSize(){
+    public ChikaSize getSize() {
         return size;
     }
 
@@ -88,7 +89,10 @@ public class Chika implements ILiveable {
         return currentHealth;
     }
 
-
+    @Override
+    public short getDamageDealt() {
+        return size.number;
+    }
 
     // EVENT CALLBACKS
 
@@ -99,7 +103,7 @@ public class Chika implements ILiveable {
 
     @Override
     public boolean walkedIn(IEntity walker) {
-        if (walker instanceof BigChika){
+        if (walker instanceof BigChika) {
             BigChika player = (BigChika) walker;
             player.controller.walkedIn(this);
         }
@@ -109,11 +113,12 @@ public class Chika implements ILiveable {
 
     @Override
     public boolean walkedInBehind(IEntity walker) {
-        if (walker instanceof BigChika){
+        if (walker instanceof BigChika) {
             BigChika bigChika = (BigChika) walker;
             bigChika.tow(this);
         }
 
         return true;
     }
+
 }

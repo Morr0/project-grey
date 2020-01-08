@@ -3,14 +3,18 @@ package rami.project.grey.core.gridsystem;
 import java.util.*;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+
+import rami.project.grey.core.entity.EntityDeathReceiver;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.loot.StandardCoin;
+import rami.project.grey.core.entity.enemy.Muka;
 
 // TODO a certain IEntity must only touch one grid at a single time
 // To be used directly with the graphics
-public final class GridManager {
+public final class GridManager implements EntityDeathReceiver {
     int columns, rows;
 
     private Grid[][] map;
@@ -43,6 +47,7 @@ public final class GridManager {
 
         // TEMPORARY
         put(1,1, new StandardCoin());
+        put(6,6, new Muka(this, Muka.MukaSize.XLARGE));
     }
 
     public void addSubscriber(GridSubscriber sub){
@@ -77,6 +82,11 @@ public final class GridManager {
         }
     }
 
+    public void touchedAt(Vector2 grid, IEntity toucher){
+        if (map[(int) grid.x][(int) grid.y].currentResider != null)
+            map[(int) grid.x][(int) grid.y].currentResider.touched(toucher);
+    }
+
     public IEntity at(int locationX, int locationY){
         return map[locationX][locationY].currentResider;
     }
@@ -90,6 +100,15 @@ public final class GridManager {
             // Notify subscribers
             for (GridSubscriber subscriber: subscribers)
                 subscriber.removedEntity();
+        }
+    }
+
+    private void remove(IEntity entity){
+        for (Grid grid: occupiedGrids){
+            if (grid.currentResider == entity){
+                removeAt(grid.x, grid.y);
+                return;
+            }
         }
     }
 
@@ -164,5 +183,10 @@ public final class GridManager {
     private void notifySubscribers(IEntity player, int newGridX, int newGridY){
         for (GridSubscriber subscriber: subscribers)
             subscriber.playerPosChanged(newGridX, newGridY);
+    }
+
+    @Override
+    public void died(IEntity entity) {
+        remove(entity);
     }
 }

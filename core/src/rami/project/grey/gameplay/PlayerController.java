@@ -14,7 +14,7 @@ import rami.project.grey.ui.screens.PlayerHud;
 import rami.project.grey.ui.screens.ScreenBackground;
 
 /**
- * Is what controls the player where it coordinates between the logic and view of the game so each thing can do its own.
+ * Is what controls the player where it coordinates between the logic and bigChika of the game so each thing can do its own.
  * This class is what controls every movable thing on the screen.
  * */
 public final class PlayerController implements GridSubscriber {
@@ -22,7 +22,7 @@ public final class PlayerController implements GridSubscriber {
     private PlayerHud hud;
     public Player player;
     public ItemInventory inventory;
-    BigChika view;
+    public BigChika bigChika;
     private GridManager gridManager;
     Spawner spawner;
     XPHandler xp;
@@ -58,14 +58,14 @@ public final class PlayerController implements GridSubscriber {
         this.hud = hud;
         this.player = new Player();
         this.inventory = player.getPlayerInventory();
-        this.view = new BigChika(inventory, player.maxAllowableTowes(), player.maxAllowableAttachments());
-        this.view.addController(this);
+        this.bigChika = new BigChika(inventory, player.maxAllowableTowes(), player.maxAllowableAttachments());
+        this.bigChika.addController(this);
 
         this.startingTime = System.currentTimeMillis();
 
         this.gridManager = gridManager;
         this.gridPos = new Vector2(gridColumns / 2, gridRows / 2);
-        this.gridManager.put((int) this.gridPos.x, (int) this.gridPos.y, view);
+        this.gridManager.put((int) this.gridPos.x, (int) this.gridPos.y, bigChika);
 
         this.gridManager.addSubscriber(this);
 
@@ -94,7 +94,7 @@ public final class PlayerController implements GridSubscriber {
         // Updates speed and acceleration depending on the thruster
         thruster.updateThrusting(dt);
 
-        currentAccel = 1 / view.getWeight();
+        currentAccel = 1 / bigChika.getWeight();
         currentAccel += thruster.thrustAcceleration;
 
         currentSpeed += currentAccel * dt;
