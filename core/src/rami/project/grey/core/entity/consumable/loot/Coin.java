@@ -5,7 +5,7 @@ import rami.project.grey.core.item.Item;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.item.ItemNameRegistry;
 
-public class StandardCoin extends Item implements IEntity, ILoot {
+public class Coin extends Item implements IEntity, ILoot {
     @Override
     public boolean isItem() {
         return true;
@@ -68,7 +68,7 @@ public class StandardCoin extends Item implements IEntity, ILoot {
 
     @Override
     public ItemType getType() {
-        return null;
+        return ItemType.LOOT;
     }
 
     @Override

@@ -4,6 +4,8 @@ package rami.project.grey.core.item;
  * Describes an item that can be stored
  * */
 public abstract class Item {
+    public ItemGrade grade;
+
     public static final int UNLIMATED_STACKING = -1;
 
     public abstract String getName();
@@ -35,9 +37,10 @@ public abstract class Item {
 
     public enum ItemType {
         // Thrusters
-        ATTACHABLE_THRUSTER_STANDARD,
-        ATTACHABLE_AMMO_STANDARD_BULLET,
-        ATTACHABLE_WEAPON
+        ATTACHABLE_THRUSTER,
+        ATTACHABLE_AMMO,
+        ATTACHABLE_WEAPON,
+        LOOT
 
         ;
     }

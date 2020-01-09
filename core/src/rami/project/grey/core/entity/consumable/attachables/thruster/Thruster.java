@@ -11,6 +11,7 @@ public final class Thruster extends Item implements IAttachable {
 
     public Thruster(ThrusterType type){
         this.type = type;
+        this.grade = type.grade();
     }
 
     public boolean isAttached = false;
@@ -80,7 +81,7 @@ public final class Thruster extends Item implements IAttachable {
 
     @Override
     public ItemType getType() {
-        return ItemType.ATTACHABLE_THRUSTER_STANDARD;
+        return ItemType.ATTACHABLE_THRUSTER;
     }
 
     @Override

@@ -9,15 +9,27 @@ import rami.project.grey.core.item.ItemHolder;
 /**
  * Represents a weapon that uses Ammo
  * */
-public abstract class Weapon extends Item implements IAttachable {
+public class Weapon extends Item implements IAttachable {
     private ItemHolder ammo;
+
+    private WeaponType type;
+    private int currentDurability;
+
+    public Weapon(WeaponType type, int currentDurability) {
+        this.type = type;
+        this.currentDurability = currentDurability;
+    }
+
+    public WeaponType getWeaponType(){
+        return type;
+    }
 
     public final void setAmmo(ItemHolder ammo){
         this.ammo = ammo;
     }
 
     public final boolean canShoot(){
-        return ammo.getCount() > 0;
+        return (ammo.getCount() > 0) && (currentDurability > 0);
     }
 
     @Override
@@ -68,6 +80,7 @@ public abstract class Weapon extends Item implements IAttachable {
     @Override
     public void consume() {
         ammo.consume(1);
+        currentDurability--;
     }
 
     @Override
@@ -82,5 +95,10 @@ public abstract class Weapon extends Item implements IAttachable {
         }
 
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

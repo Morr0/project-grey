@@ -4,7 +4,7 @@ import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.item.ItemNameRegistry;
 
-public class StandardBullet extends Ammo {
+public class Bullet extends Ammo {
     @Override
     public String getName() {
         return ItemNameRegistry.STANDARD_BULLET;
@@ -17,7 +17,7 @@ public class StandardBullet extends Ammo {
 
     @Override
     public ItemType getType() {
-        return ItemType.ATTACHABLE_AMMO_STANDARD_BULLET;
+        return ItemType.ATTACHABLE_AMMO;
     }
 
     @Override

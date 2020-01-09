@@ -1,6 +1,7 @@
 package rami.project.grey.core.entity.consumable.attachables;
 
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
+import rami.project.grey.core.entity.consumable.attachables.weaponery.Weapon;
 
 import java.util.ArrayList;
 
@@ -9,16 +10,16 @@ import java.util.ArrayList;
  * */
 // TODO implement a mechanism to not override taken slots
 public class AttachmentStructure {
-    public static final byte RIGHT_SLOT = 1;
-    public static final byte LEFT_SLOT = 2;
+    public static final byte WEAPON_SLOT = 1;
+    public static final byte ACCESSORY_SLOT = 2;
     public static final byte THRUSTER_SLOT = 3;
 
     public byte maxAllowed;
     public byte used;
 
     // Slots
-    private IAttachable right;
-    private IAttachable left;
+    private Weapon weaponSpot;
+    private IAttachable accesorySpot;
     private Thruster thrusterSpot;
 
     public AttachmentStructure(byte maxAllowed){
@@ -26,10 +27,10 @@ public class AttachmentStructure {
     }
 
     public void put(byte slot, IAttachable attachment){
-        if (slot == RIGHT_SLOT)
-            right = attachment;
-        else if (slot == LEFT_SLOT)
-            left = attachment;
+        if (slot == WEAPON_SLOT)
+            weaponSpot = (Weapon) attachment;
+        else if (slot == ACCESSORY_SLOT)
+            accesorySpot = attachment;
         else if (slot == THRUSTER_SLOT)
             thrusterSpot = (Thruster) attachment;
 
@@ -38,19 +39,19 @@ public class AttachmentStructure {
 
     private void updateVariables(){
         used = 0;
-        if (right != null)
+        if (weaponSpot != null)
             used++;
-        if (left != null)
+        if (accesorySpot != null)
             used++;
         if (thrusterSpot != null)
             used++;
     }
 
     public void remove(byte slot){
-        if (slot == RIGHT_SLOT)
-            right = null;
-        else if (slot == LEFT_SLOT)
-            left = null;
+        if (slot == WEAPON_SLOT)
+            weaponSpot = null;
+        else if (slot == ACCESSORY_SLOT)
+            accesorySpot = null;
         else if (slot == THRUSTER_SLOT)
             thrusterSpot = null;
 
@@ -59,10 +60,10 @@ public class AttachmentStructure {
 
     public IAttachable get(byte slot){
         switch (slot){
-            case RIGHT_SLOT:
-                return right;
-            case LEFT_SLOT:
-                return left;
+            case WEAPON_SLOT:
+                return weaponSpot;
+            case ACCESSORY_SLOT:
+                return accesorySpot;
             case THRUSTER_SLOT:
                 return thrusterSpot;
             default:
@@ -73,10 +74,10 @@ public class AttachmentStructure {
 
     public ArrayList<IAttachable> getUsedAttachments(){
         ArrayList<IAttachable> attachables = new ArrayList<>(maxAllowed);
-        if (right != null)
-            attachables.add(right);
-        if (left != null)
-            attachables.add(left);
+        if (weaponSpot != null)
+            attachables.add(weaponSpot);
+        if (accesorySpot != null)
+            attachables.add(accesorySpot);
         if (thrusterSpot != null)
             attachables.add(thrusterSpot);
 
@@ -92,5 +93,9 @@ public class AttachmentStructure {
             return THRUSTER_SLOT;
 
         return -1;
+    }
+
+    public boolean hasWeapon(){
+        return weaponSpot != null;
     }
 }

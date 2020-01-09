@@ -3,6 +3,7 @@ package rami.project.grey.core.entity.chika;
 import com.badlogic.gdx.Gdx;
 import rami.project.grey.core.entity.consumable.attachables.AttachmentStructure;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
+import rami.project.grey.core.entity.consumable.attachables.weaponery.Weapon;
 import rami.project.grey.core.item.ItemInventory;
 import rami.project.grey.gameplay.PlayerController;
 
@@ -148,7 +149,21 @@ public class BigChika extends Chika {
 
             updateConfiguration();
 
-            Gdx.app.log("Game", "Attached to thruster");
         }
+    }
+
+    @Override
+    public short getDamageDealt() {
+        if (attachments.hasWeapon()){
+            Gdx.app.log("Game", "Called");
+            Weapon weapon = ((Weapon) attachments.get(AttachmentStructure.WEAPON_SLOT));
+            if (weapon.canBeConsumed()){
+                short damage = size.number;
+                damage *= weapon.getWeaponType().multiplier;
+                weapon.consume();
+            }
+        }
+
+        return 0;
     }
 }

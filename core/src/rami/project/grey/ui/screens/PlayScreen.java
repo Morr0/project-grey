@@ -89,8 +89,6 @@ public class PlayScreen extends BaseScreen {
     public void update(float dt) {
         controller.update(dt);
 
-        log("Total items: " + controller.inventory.totalItems());
-
         // KEEP LAST
         camera.update();
     }

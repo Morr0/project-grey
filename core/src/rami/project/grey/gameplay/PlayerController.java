@@ -5,10 +5,14 @@ import com.badlogic.gdx.math.Vector2;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
-import rami.project.grey.core.entity.consumable.loot.StandardCoin;
+import rami.project.grey.core.entity.consumable.attachables.weaponery.Weapon;
+import rami.project.grey.core.entity.consumable.attachables.weaponery.WeaponType;
+import rami.project.grey.core.entity.consumable.attachables.weaponery.ammo.Bullet;
+import rami.project.grey.core.entity.consumable.loot.Coin;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.core.gridsystem.Spawner;
+import rami.project.grey.core.item.ItemHolder;
 import rami.project.grey.core.item.ItemInventory;
 import rami.project.grey.ui.screens.PlayerHud;
 import rami.project.grey.ui.screens.ScreenBackground;
@@ -26,9 +30,6 @@ public final class PlayerController implements GridSubscriber {
     private GridManager gridManager;
     Spawner spawner;
     XPHandler xp;
-
-
-
 
     private static final float DEFAULT_VELOCITY = 125f;
 
@@ -78,6 +79,13 @@ public final class PlayerController implements GridSubscriber {
         this.thruster = new ThrustingController(this);
 
         this.score = new ScoreManager(this);
+
+//        for (int x = 0; x < 10; x++)
+//            this.inventory.addItem(new Bullet());
+        Weapon weapon = new Weapon(WeaponType.STANDARD, WeaponType.STANDARD.durability);
+        weapon.setAmmo(new ItemHolder(new Bullet(), 10));
+        this.inventory.addItem(weapon);
+        this.bigChika.attach(weapon);
     }
 
     // BECAUSE OF THE NEED TO INIT THIS CLASS FIRST THEN SPAWNER
@@ -138,8 +146,8 @@ public final class PlayerController implements GridSubscriber {
     // PUBLIC METHODS
 
     public <T extends IEntity> void interact(T interactor){
-        if (interactor instanceof StandardCoin){
-            score.add(((StandardCoin) interactor).getAward());
+        if (interactor instanceof Coin){
+            score.add(((Coin) interactor).getAward());
         }
     }
 

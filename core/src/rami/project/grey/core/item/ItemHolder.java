@@ -4,7 +4,7 @@ public class ItemHolder {
     Item item;
     int count;
 
-    ItemHolder(Item item, int count){
+    public ItemHolder(Item item, int count){
         this.item = item;
         this.count = count;
     }

@@ -9,7 +9,7 @@ import rami.project.grey.core.entity.EntityDeathReceiver;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
-import rami.project.grey.core.entity.consumable.loot.StandardCoin;
+import rami.project.grey.core.entity.consumable.loot.Coin;
 import rami.project.grey.core.entity.enemy.Muka;
 
 // TODO a certain IEntity must only touch one grid at a single time
@@ -46,7 +46,7 @@ public final class GridManager implements EntityDeathReceiver {
         this.subscribers = new ArrayList<>(2);
 
         // TEMPORARY
-        put(1,1, new StandardCoin());
+        put(1,1, new Coin());
         put(6,6, new Muka(this, Muka.MukaSize.XLARGE));
     }
 
