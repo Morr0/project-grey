@@ -9,4 +9,12 @@ public final class ItemNameRegistry {
     // LOOTS
     private static final String LOOT = "Loot";
     public static final String COIN_STANDARD = LOOT + "-coin";
+
+    // AMMO
+    private static final String AMMO = "ammo";
+    public static final String STANDARD_BULLET = AMMO + "-standardBullet";
+
+    // WEAPONS
+    private static final String WEAPON = "weapon";
+    public static final String STANDARD_GUN = WEAPON + "-standardGun";
 }

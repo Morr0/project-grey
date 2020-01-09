@@ -16,4 +16,8 @@ public class ItemHolder {
     public int getCount() {
         return count;
     }
+
+    public void consume(int amount){
+        count -= amount;
+    }
 }

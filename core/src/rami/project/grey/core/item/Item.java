@@ -36,9 +36,9 @@ public abstract class Item {
     public enum ItemType {
         // Thrusters
         ATTACHABLE_THRUSTER_STANDARD,
+        ATTACHABLE_AMMO_STANDARD_BULLET,
+        ATTACHABLE_WEAPON
 
-        // Loots
-        STANDARD_COIN
         ;
     }
 }
