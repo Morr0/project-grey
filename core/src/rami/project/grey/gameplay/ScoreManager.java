@@ -16,7 +16,8 @@ final class ScoreManager {
     void update(){
         scoreGain = c.stopped? STOPPED_SCORE_RATE: 1;
         scoreGain *= (float) (c.bigChika.getTotalHealth()/(c.bigChika.getCurrentHealth() + 1));
-        scoreGain /= c.bigChika.getNoTows() * c.bigChika.getCurrentHealth() + 1;
+//        scoreGain /= c.bigChika.getNoTows() * c.bigChika.getCurrentHealth() + 1;
+        scoreGain /= c.bigChika.getCurrentHealth() + 1;
 
         currentScore += scoreGain;
 

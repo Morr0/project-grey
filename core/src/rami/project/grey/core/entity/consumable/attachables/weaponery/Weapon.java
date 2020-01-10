@@ -1,17 +1,18 @@
 package rami.project.grey.core.entity.consumable.attachables.weaponery;
 
+import com.badlogic.gdx.Gdx;
+
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
 import rami.project.grey.core.item.Item;
 import rami.project.grey.core.item.ItemHolder;
+import rami.project.grey.core.item.ItemInventory;
 
 /**
  * Represents a weapon that uses Ammo
  * */
 public class Weapon extends Item implements IAttachable {
-    private ItemHolder ammo;
-
     private WeaponType type;
     private int currentDurability;
 
@@ -22,14 +23,6 @@ public class Weapon extends Item implements IAttachable {
 
     public WeaponType getWeaponType(){
         return type;
-    }
-
-    public final void setAmmo(ItemHolder ammo){
-        this.ammo = ammo;
-    }
-
-    public final boolean canShoot(){
-        return (ammo.getCount() > 0) && (currentDurability > 0);
     }
 
     @Override
@@ -74,18 +67,20 @@ public class Weapon extends Item implements IAttachable {
 
     @Override
     public final boolean canBeConsumed() {
-        return true;
+        return currentDurability > 0;
     }
 
     @Override
     public void consume() {
-        ammo.consume(1);
-        currentDurability--;
+        if (ItemInventory.getInv().getInUseItem(ItemType.AMMO).canBeConsumed()){
+            ItemInventory.getInv().getInUseItem(ItemType.AMMO).consume(1);
+            currentDurability--;
+        }
     }
 
     @Override
     public ItemType getType() {
-        return ItemType.ATTACHABLE_WEAPON;
+        return ItemType.WEAPON;
     }
 
     @Override

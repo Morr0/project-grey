@@ -8,13 +8,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.Game;
-import rami.project.grey.core.entity.IEntity;
+import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.loot.ILoot;
-import rami.project.grey.core.entity.enemy.IEnemy;
+import rami.project.grey.core.entity.enemy.Enemy;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -44,17 +44,14 @@ public class PlayScreen extends BaseScreen {
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
 
-        initGrids();
-        initDrawables();
-        initControllers();
-    }
-
-    private void initGrids(){
-        // Initialising the grid manager
+        // The grid manager stuff
         gridColumns = 9;
         gridRows = 9;
         gCal = new PixelGridCalculator(gWidth, gHeight, gridColumns, gridRows);
-        gManager = new GridManager(gridColumns, gridRows);
+        gManager = GridManager.initGridManager(gridColumns, gridRows);
+
+        initDrawables();
+        initControllers();
     }
 
     private void initDrawables(){
@@ -67,7 +64,7 @@ public class PlayScreen extends BaseScreen {
 
     private void initControllers(){
         // Player controller
-        controller = new PlayerController(background, hud, gridColumns, gridRows, gManager);
+        controller = new PlayerController(background, hud);
 
         // Spawning
         spawner = new Spawner(gManager, controller.getMaximumAllowableSpawns(),
@@ -180,8 +177,8 @@ public class PlayScreen extends BaseScreen {
             drawAttachments((IAttachable) grid.currentResider, pixelPos);
         else if (grid.currentResider instanceof ILoot)
             drawLoot((ILoot) grid.currentResider, pixelPos);
-        else if (grid.currentResider instanceof IEnemy)
-            drawEnemy((IEnemy) grid.currentResider, pixelPos);
+        else if (grid.currentResider instanceof Enemy)
+            drawEnemy((Enemy) grid.currentResider, pixelPos);
     }
 
     private void drawAttachments(IAttachable attachment, Vector2 pixels){
@@ -194,7 +191,7 @@ public class PlayScreen extends BaseScreen {
         batch.draw(game.res.getCoin(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
     }
 
-    private void drawEnemy(IEnemy enemy, Vector2 pixels){
+    private void drawEnemy(Enemy enemy, Vector2 pixels){
         batch.draw(game.res.getCoin(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
     }
 
@@ -203,7 +200,7 @@ public class PlayScreen extends BaseScreen {
         if (chika instanceof BigChika)
             drawBigChika();
         else if (!chika.hasParent){
-            Chika.ChikaSize size = chika.getSize();
+            EntitySize size = chika.getSize();
             Vector2 dimensions = new Vector2(gCal.gridWidth / size.number, gCal.gridHeight / size.number);
             batch.draw(game.res.getChika1(), pixels.x, pixels.y, dimensions.x, dimensions.y);
         }
@@ -214,6 +211,10 @@ public class PlayScreen extends BaseScreen {
         // Drawing the BigChika first
         Vector2 pixels = gCal.getPixelPosFromGrid(controller.gridPos);
         batch.draw(game.res.getBigChika(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
+
+        if (controller.bigChika.attachments.hasWeapon()){
+            batch.draw(game.res.getGun(), pixels.x + gCal.gridWidth, pixels.y + gCal.gridHeight);
+        }
 
         // Drawing the towed ones
 //        for (int i = 1; i <= playerView.getNoTows(); i++){

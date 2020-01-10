@@ -37,9 +37,9 @@ public abstract class Item {
 
     public enum ItemType {
         // Thrusters
-        ATTACHABLE_THRUSTER,
-        ATTACHABLE_AMMO,
-        ATTACHABLE_WEAPON,
+        THRUSTER,
+        AMMO,
+        WEAPON,
         LOOT
 
         ;

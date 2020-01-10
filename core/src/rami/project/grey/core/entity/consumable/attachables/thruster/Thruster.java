@@ -81,7 +81,7 @@ public final class Thruster extends Item implements IAttachable {
 
     @Override
     public ItemType getType() {
-        return ItemType.ATTACHABLE_THRUSTER;
+        return ItemType.THRUSTER;
     }
 
     @Override

@@ -6,16 +6,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.core.entity.EntityDeathReceiver;
+import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
-import rami.project.grey.core.entity.consumable.loot.Coin;
 import rami.project.grey.core.entity.enemy.Muka;
 
-// TODO a certain IEntity must only touch one grid at a single time
-// To be used directly with the graphics
+// SINGLETON
 public final class GridManager implements EntityDeathReceiver {
-    int columns, rows;
+    public final int columns, rows;
 
     private Grid[][] map;
     // This is used to decrease processing
@@ -29,7 +28,7 @@ public final class GridManager implements EntityDeathReceiver {
     }
 
     // The reason columns and rows are not constants is to deal with the future expandability of the game
-    public GridManager(int columns, int rows){
+    private GridManager(int columns, int rows){
         this.columns = columns;
         this.rows = rows;
 
@@ -46,9 +45,19 @@ public final class GridManager implements EntityDeathReceiver {
         this.subscribers = new ArrayList<>(2);
 
         // TEMPORARY
-        put(1,1, new Coin());
-        put(6,6, new Muka(this, Muka.MukaSize.XLARGE));
+        put(6,6, new Muka(this, EntitySize.XLARGE));
     }
+
+    // Singleton -- START
+    private static GridManager gm;
+    /** Must only be called once when initiliased by PlayScreen */
+    public static GridManager initGridManager(int columns, int rows){
+        return gm = new GridManager(columns, rows);
+    }
+    public static GridManager get(){
+        return gm;
+    }
+    // Singleton -- END
 
     public void addSubscriber(GridSubscriber sub){
         this.subscribers.add(sub);

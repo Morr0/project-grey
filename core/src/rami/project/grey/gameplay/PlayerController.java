@@ -7,6 +7,7 @@ import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.attachables.weaponery.Weapon;
 import rami.project.grey.core.entity.consumable.attachables.weaponery.WeaponType;
+import rami.project.grey.core.entity.consumable.attachables.weaponery.ammo.Ammo;
 import rami.project.grey.core.entity.consumable.attachables.weaponery.ammo.Bullet;
 import rami.project.grey.core.entity.consumable.loot.Coin;
 import rami.project.grey.core.gridsystem.GridManager;
@@ -54,7 +55,7 @@ public final class PlayerController implements GridSubscriber {
     // Player coordinates
     public Vector2 gridPos;
 
-    public PlayerController(ScreenBackground bg, PlayerHud hud, int gridColumns, int gridRows, GridManager gridManager){
+    public PlayerController(ScreenBackground bg, PlayerHud hud){
         this.bg = bg;
         this.hud = hud;
         this.player = new Player();
@@ -64,8 +65,8 @@ public final class PlayerController implements GridSubscriber {
 
         this.startingTime = System.currentTimeMillis();
 
-        this.gridManager = gridManager;
-        this.gridPos = new Vector2(gridColumns / 2, gridRows / 2);
+        this.gridManager = GridManager.get();
+        this.gridPos = new Vector2(0, 0);
         this.gridManager.put((int) this.gridPos.x, (int) this.gridPos.y, bigChika);
 
         this.gridManager.addSubscriber(this);
@@ -80,11 +81,10 @@ public final class PlayerController implements GridSubscriber {
 
         this.score = new ScoreManager(this);
 
-//        for (int x = 0; x < 10; x++)
-//            this.inventory.addItem(new Bullet());
         Weapon weapon = new Weapon(WeaponType.STANDARD, WeaponType.STANDARD.durability);
-        weapon.setAmmo(new ItemHolder(new Bullet(), 10));
-        this.inventory.addItem(weapon);
+        Bullet bullet = new Bullet();
+        this.inventory.setInUseItem(this.inventory.addItem(weapon));
+        this.inventory.setInUseItem(this.inventory.addItem(bullet, 10));
         this.bigChika.attach(weapon);
     }
 

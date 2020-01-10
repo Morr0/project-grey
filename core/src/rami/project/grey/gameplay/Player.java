@@ -53,10 +53,10 @@ public final class Player {
             // Tell inventory it has one
             prefs.putBoolean(CommonPreferences.GENERAL_PREFERENCES, GENERAL_PREFS_HAS_INVENTORY, true);
 
-            return new ItemInventory();
+            return ItemInventory.getInv();
         } else {
             // TODO retrieve the inventory from storage
-            return new ItemInventory();
+            return ItemInventory.getInv();
         }
     }
 }

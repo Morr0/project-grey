@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.Random;
 
+import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.attachables.thruster.ThrusterType;
@@ -174,8 +175,8 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
         }
 
         if (chikasToSpawn > 0){
-            byte randomChikaSize = (byte) numGen.nextInt(Chika.ChikaSize.LARGE.number + 1);
-            gMan.put(x, y, new Chika(Chika.ChikaSize.valueOf(randomChikaSize)));
+            byte randomChikaSize = (byte) numGen.nextInt(EntitySize.LARGE.number + 1);
+            gMan.put(x, y, new Chika(EntitySize.valueOf(randomChikaSize)));
 
             chikasToSpawn--;
             currentlySpawned++;

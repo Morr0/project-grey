@@ -1,6 +1,8 @@
 package rami.project.grey.core.entity.consumable.attachables.weaponery;
 
-public enum WeaponType {
+import rami.project.grey.ui.resources.ITypeHasTexture;
+
+public enum WeaponType implements ITypeHasTexture {
     STANDARD(1, 500, 4),
     UPGRADED(2, 2000, 5)
     ;

@@ -20,10 +20,10 @@ class ThrustingController {
 
     void toggleThruster(){
         // KEEP IT
-        if (c.bigChika.attachments.get(AttachmentStructure.THRUSTER_SLOT) == null)
+        if (!c.bigChika.attachments.hasThruster())
             return;
 
-        Thruster thruster = (Thruster) c.bigChika.attachments.get(AttachmentStructure.THRUSTER_SLOT);
+        Thruster thruster = c.bigChika.attachments.getThruster();
 
         // Make sure to not stop midway thrusting if a thrust toggle was issued
         if (System.currentTimeMillis() < targetBurstTimeEnd)
@@ -40,9 +40,8 @@ class ThrustingController {
 
     void toggleStop(){
         // To make sure there exists a thruster to work
-        if (c.bigChika.attachments.get(AttachmentStructure.THRUSTER_SLOT) != null){
+        if (c.bigChika.attachments.hasThruster())
             c.stopped = !c.stopped;
-        }
     }
 
     void updateThrusting(float dt){
@@ -50,7 +49,7 @@ class ThrustingController {
             if (c.stopped)
                 c.stopped = false;
 
-            Thruster thruster = (Thruster) c.bigChika.attachments.get(AttachmentStructure.THRUSTER_SLOT);
+            Thruster thruster = c.bigChika.attachments.getThruster();
 
             c.desiredSpeed *= thruster.getSpeedMultiplier();
 

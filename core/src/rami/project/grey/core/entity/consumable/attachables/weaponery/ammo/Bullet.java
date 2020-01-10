@@ -17,7 +17,7 @@ public class Bullet extends Ammo {
 
     @Override
     public ItemType getType() {
-        return ItemType.ATTACHABLE_AMMO;
+        return ItemType.AMMO;
     }
 
     @Override
