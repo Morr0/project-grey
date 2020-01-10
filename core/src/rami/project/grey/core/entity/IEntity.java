@@ -12,6 +12,11 @@ public interface IEntity {
     String getName();
 
     /**
+     * @return null -> an item having no notion of size
+     * */
+    EntitySize getSize();
+
+    /**
      * For the inventory system.
      * */
     boolean isItem();

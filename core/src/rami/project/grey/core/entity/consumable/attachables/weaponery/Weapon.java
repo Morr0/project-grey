@@ -1,18 +1,16 @@
 package rami.project.grey.core.entity.consumable.attachables.weaponery;
 
-import com.badlogic.gdx.Gdx;
-
+import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
-import rami.project.grey.core.item.Item;
-import rami.project.grey.core.item.ItemHolder;
+import rami.project.grey.core.item.IItem;
 import rami.project.grey.core.item.ItemInventory;
 
 /**
  * Represents a weapon that uses Ammo
  * */
-public class Weapon extends Item implements IAttachable {
+public class Weapon implements IItem, IAttachable {
     private WeaponType type;
     private int currentDurability;
 
@@ -51,11 +49,6 @@ public class Weapon extends Item implements IAttachable {
     }
 
     @Override
-    public boolean inGameUsable() {
-        return true;
-    }
-
-    @Override
     public boolean isStackable() {
         return false;
     }
@@ -76,6 +69,11 @@ public class Weapon extends Item implements IAttachable {
             ItemInventory.getInv().getInUseItem(ItemType.AMMO).consume(1);
             currentDurability--;
         }
+    }
+
+    @Override
+    public EntitySize getSize() {
+        return null;
     }
 
     @Override

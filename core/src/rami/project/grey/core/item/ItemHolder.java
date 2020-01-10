@@ -1,16 +1,16 @@
 package rami.project.grey.core.item;
 
-public class ItemHolder<T extends Item> {
-    Item item;
+public class ItemHolder<T extends IItem> {
+    IItem IItem;
     int count;
 
     public ItemHolder(T item, int count){
-        this.item = item;
+        this.IItem = item;
         this.count = count;
     }
 
-    public Item getItem() {
-        return item;
+    public IItem getIItem() {
+        return IItem;
     }
 
     public int getCount() {

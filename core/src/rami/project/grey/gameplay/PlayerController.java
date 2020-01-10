@@ -112,7 +112,7 @@ public final class PlayerController implements GridSubscriber {
         // Score regulation
         score.update();
 
-        // Entity management
+        // LiveableEntity management
         if (thruster.currentlyThrusting) // TODO make it so that entities move by instead of suddenly disappearing and when he comes back from thrusting as well
             gridManager.removeCurrentNonPlayers();
 

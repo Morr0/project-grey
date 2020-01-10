@@ -1,5 +1,6 @@
 package rami.project.grey.core.entity.consumable.attachables.weaponery.ammo;
 
+import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.item.ItemNameRegistry;
@@ -28,4 +29,8 @@ public class Bullet extends Ammo {
         return true;
     }
 
+    @Override
+    public EntitySize getSize() {
+        return null;
+    }
 }

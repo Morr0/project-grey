@@ -11,7 +11,7 @@ import rami.project.grey.core.entity.consumable.attachables.weaponery.ammo.Ammo;
  * */
 // SINGLETON
 public final class ItemInventory {
-    private HashSet<ItemHolder<? extends Item>> totalItemHolders;
+    private HashSet<ItemHolder<? extends IItem>> totalItemHolders;
 
     // TODO change this to be false when the inventory can be accessed by the main menu
     private boolean inGameSession = true;
@@ -24,7 +24,7 @@ public final class ItemInventory {
      * Since not all ItemTypes have the concept of in game usable,
      * then this will return null on those items otherwise will return the instance if exists.
      * */
-    public ItemHolder getInUseItem(Item.ItemType type){
+    public ItemHolder getInUseItem(IItem.ItemType type){
         switch (type){
             default:
                 return null;
@@ -36,7 +36,7 @@ public final class ItemInventory {
     }
 
     public void  setInUseItem(ItemHolder holder){
-        switch (holder.getItem().getType()){
+        switch (holder.getIItem().getType()){
             case WEAPON:
                 inUseWeapon = holder;
                 break;
@@ -60,19 +60,19 @@ public final class ItemInventory {
         this.totalItemHolders = new HashSet<>();
     }
 
-    public HashSet<ItemHolder<? extends Item>> getItems(){ return totalItemHolders; }
+    public HashSet<ItemHolder<? extends IItem>> getItems(){ return totalItemHolders; }
     public int totalItems(){ return totalItemHolders.size(); }
 
     /**
      * @param amount if left empty, then will default to 1, else just pass the amount > 0
-     * @return  reference to the item holder
+     * @return  reference to the IItem holder
      * */
-    public <T extends Item> ItemHolder<T> addItem(T item, int... amount){
+    public <T extends IItem> ItemHolder<T> addItem(T item, int... amount){
         int amnt = amount.length > 0? amount[0]: 1;
 
         // Searches if exists else will add a new ItemHolder downstairs
         for (ItemHolder holder: totalItemHolders){
-            if (holder.getItem().getType() == item.getType()){ // Checks if same type
+            if (holder.getIItem().getType() == item.getType()){ // Checks if same type
                 if (item.isStackable()){ // Ensures to only add stackable items
                     if (holder.count < item.stackingLimit()){ // Ensures to not add more than stacking limit
                         holder.count += amnt;
@@ -92,14 +92,14 @@ public final class ItemInventory {
     }
 
     // ASSUMES THE ITEM EXISTS
-    public void consumeItem(Item item){
-        Iterator<ItemHolder<? extends Item>> iterator = totalItemHolders.iterator();
+    public void consumeItem(IItem IItem){
+        Iterator<ItemHolder<? extends IItem>> iterator = totalItemHolders.iterator();
         while (iterator.hasNext()){
             ItemHolder holder = iterator.next();
-            if (holder.getItem().getType() == item.getType()){
+            if (holder.getIItem().getType() == IItem.getType()){
                 holder.count--;
 
-                // In case there is not any left, remove the item holder
+                // In case there is not any left, remove the IItem holder
                 if (holder.count <= 0){
                     iterator.remove();
                     return;

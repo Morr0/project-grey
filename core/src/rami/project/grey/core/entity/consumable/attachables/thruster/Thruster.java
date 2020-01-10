@@ -1,12 +1,15 @@
 package rami.project.grey.core.entity.consumable.attachables.thruster;
 
+import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
-import rami.project.grey.core.item.Item;
+import rami.project.grey.core.item.IItem;
+import rami.project.grey.core.item.ItemGrade;
 
-public final class Thruster extends Item implements IAttachable {
+public final class Thruster implements IItem, IAttachable {
 
+    private ItemGrade grade;
     ThrusterType type;
 
     public Thruster(ThrusterType type){
@@ -75,6 +78,11 @@ public final class Thruster extends Item implements IAttachable {
     }
 
     @Override
+    public EntitySize getSize() {
+        return null;
+    }
+
+    @Override
     public boolean walkedInBehind(IEntity walker) {
         return true;
     }
@@ -97,11 +105,6 @@ public final class Thruster extends Item implements IAttachable {
     @Override
     public void consume() {
 
-    }
-
-    @Override
-    public boolean inGameUsable() {
-        return true;
     }
 
     @Override

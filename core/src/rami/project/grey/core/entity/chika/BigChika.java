@@ -1,7 +1,5 @@
 package rami.project.grey.core.entity.chika;
 
-import com.badlogic.gdx.Gdx;
-
 import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.consumable.attachables.AttachmentStructure;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
@@ -77,7 +75,6 @@ public class BigChika extends Chika {
                 int damage = size.number;
                 damage *= weapon.getWeaponType().multiplier;
                 weapon.consume();
-                Gdx.app.log("Game", "" + damage);
                 return damage;
             }
         }

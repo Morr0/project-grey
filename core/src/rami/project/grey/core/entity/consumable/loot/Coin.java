@@ -1,11 +1,12 @@
 package rami.project.grey.core.entity.consumable.loot;
 
+import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.chika.BigChika;
-import rami.project.grey.core.item.Item;
+import rami.project.grey.core.item.IItem;
 import rami.project.grey.core.entity.IEntity;
 import rami.project.grey.core.item.ItemNameRegistry;
 
-public class Coin extends Item implements IEntity, ILoot {
+public class Coin implements IItem, IEntity, ILoot {
     @Override
     public boolean isItem() {
         return true;
@@ -42,18 +43,13 @@ public class Coin extends Item implements IEntity, ILoot {
     }
 
     @Override
-    public boolean inGameUsable() {
-        return false;
-    }
-
-    @Override
     public boolean isStackable() {
         return false;
     }
 
     @Override
     public int stackingLimit() {
-        return Item.UNLIMATED_STACKING;
+        return IItem.UNLIMATED_STACKING;
     }
 
     @Override
@@ -74,5 +70,10 @@ public class Coin extends Item implements IEntity, ILoot {
     @Override
     public short getAward(){
         return 500;
+    }
+
+    @Override
+    public EntitySize getSize() {
+        return null;
     }
 }

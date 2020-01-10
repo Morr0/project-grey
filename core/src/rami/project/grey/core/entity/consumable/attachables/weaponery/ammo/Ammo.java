@@ -1,14 +1,9 @@
 package rami.project.grey.core.entity.consumable.attachables.weaponery.ammo;
 
 import rami.project.grey.core.entity.IEntity;
-import rami.project.grey.core.item.Item;
+import rami.project.grey.core.item.IItem;
 
-public abstract class Ammo extends Item implements IEntity {
-    @Override
-    public final boolean inGameUsable() {
-        return true;
-    }
-
+public abstract class Ammo implements IItem, IEntity {
     @Override
     public final boolean isStackable() {
         return true;

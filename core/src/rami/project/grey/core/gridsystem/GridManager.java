@@ -170,7 +170,7 @@ public final class GridManager implements EntityDeathReceiver {
         try {
             if (map[desiredX][desiredY + 1].currentResider != null)
                 map[desiredX][desiredY + 1].currentResider.walkedInBehind(oldPos.currentResider);
-        } catch (ArrayIndexOutOfBoundsException ex){Gdx.app.log("Game", " Exception");}
+        } catch (ArrayIndexOutOfBoundsException ex){}
 
         // The actual moving
         map[desiredX][desiredY].currentResider = map[oldX][oldY].currentResider;

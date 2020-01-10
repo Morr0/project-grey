@@ -3,7 +3,7 @@ package rami.project.grey.core.entity;
 /**
  * Describes an entity that has health and can attack. The units are in HP.
  * */
-public interface ILiveable extends IEntity {
+public interface ILiveableEntity extends IEntity {
     int getTotalHealth();
     int getCurrentHealth();
 

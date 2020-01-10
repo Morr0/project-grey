@@ -1,35 +1,14 @@
 package rami.project.grey.core.entity.enemy;
 
-import com.badlogic.gdx.Gdx;
-
-import rami.project.grey.core.entity.EntityDeathReceiver;
 import rami.project.grey.core.entity.EntitySize;
+import rami.project.grey.core.entity.EntityType;
 import rami.project.grey.core.entity.IEntity;
-import rami.project.grey.core.entity.ILiveable;
+import rami.project.grey.core.entity.LiveableEntity;
 import rami.project.grey.core.entity.chika.BigChika;
 
-public abstract class Enemy implements ILiveable {
-    protected EntityDeathReceiver entityDeathReceiver;
-    protected EntitySize size;
-
-
-    public Enemy(EntityDeathReceiver entityDeathReceiver, EntitySize size){
-        this.entityDeathReceiver = entityDeathReceiver;
-        this.size = size;
-
-        this.hp = BASE_HEALTH * size.number;
-    }
-
-    private final static short BASE_HEALTH = 6;
-    protected int hp;
-
-    protected void hit(int damageDealt){
-        hp -= damageDealt;
-
-        if (hp <= 0){
-            entityDeathReceiver.died(this);
-            return;
-        }
+public abstract class Enemy extends LiveableEntity {
+    Enemy(EntityType type, EntitySize size){
+        super(type, size);
     }
 
     @Override
@@ -57,16 +36,6 @@ public abstract class Enemy implements ILiveable {
     @Override
     public boolean walkedInBehind(IEntity walker) {
         return false;
-    }
-
-    @Override
-    public int getTotalHealth() {
-        return (short) (BASE_HEALTH * size.number);
-    }
-
-    @Override
-    public int getCurrentHealth() {
-        return hp;
     }
 
     @Override
