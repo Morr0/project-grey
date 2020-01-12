@@ -15,6 +15,7 @@ import rami.project.grey.core.entity.consumable.attachables.IAttachable;
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.loot.ILoot;
 import rami.project.grey.core.entity.enemy.Enemy;
+import rami.project.grey.core.entity.stacking.IHoldable;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -198,7 +199,7 @@ public class PlayScreen extends BaseScreen {
     // This relays all attached towes to not be drawn by this but from the parent
     private void drawChika(Chika chika, Vector2 pixels){
         if (chika instanceof BigChika)
-            drawBigChika();
+            drawBigChika(pixels);
         else if (!chika.hasParent){
             EntitySize size = chika.getSize();
             Vector2 dimensions = new Vector2(gCal.gridWidth / size.number, gCal.gridHeight / size.number);
@@ -207,18 +208,17 @@ public class PlayScreen extends BaseScreen {
     }
 
     // This draws the big chika and all towed chikas
-    private void drawBigChika(){
+    private void drawBigChika(Vector2 pixels){
         // Drawing the BigChika first
-        Vector2 pixels = gCal.getPixelPosFromGrid(controller.gridPos);
         batch.draw(game.res.getBigChika(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
 
         if (controller.bigChika.attachments.hasWeapon()){
             batch.draw(game.res.getGun(), pixels.x + gCal.gridWidth, pixels.y + gCal.gridHeight);
         }
 
-        // Drawing the towed ones
-//        for (int i = 1; i <= playerView.getNoTows(); i++){
-//            batch.draw(game.res.getTowedChika(), pixels.x, pixels.y + (i * gCal.gridHeight));
-//        }
+        // Drawing the stacked ones
+        for (int i = 1; i <= controller.bigChika.getStack().size(); i++){
+            batch.draw(game.res.getTowedChika(), pixels.x, pixels.y + (i * gCal.gridHeight));
+        }
     }
 }

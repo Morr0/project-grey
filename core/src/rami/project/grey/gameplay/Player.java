@@ -42,11 +42,11 @@ public final class Player {
         prefs.putFloat(CommonPreferences.GENERAL_PREFERENCES, NameRegistery.PPLAYER_CASH, currentCash);
     }
 
-    byte maxAllowableTowes(){
+    int maxAllowableStacks(){
         return 2;
     }
 
-    byte maxAllowableAttachments(){ return 2; }
+    int maxAllowableAttachments(){ return 2; }
 
     ItemInventory getPlayerInventory(){
         if (!prefs.getBoolean(CommonPreferences.GENERAL_PREFERENCES, GENERAL_PREFS_HAS_INVENTORY, false)){

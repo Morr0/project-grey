@@ -30,7 +30,11 @@ public abstract class Enemy extends LiveableEntity {
 
     @Override
     public boolean walkedIn(IEntity walker) {
-        return false;
+        if (walker instanceof LiveableEntity){
+            hit(((LiveableEntity) walker).getDamageDealt());
+        }
+
+        return true;
     }
 
     @Override

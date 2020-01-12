@@ -11,4 +11,9 @@ public interface ILiveableEntity extends IEntity {
      * @return how much HP should be deducted by an attack
      * */
     int getDamageDealt();
+
+//    /**
+//     * @return how much HP should be deducted by an attack that is a melee
+//     * */
+//    int getMeleeDamageDealt();
 }

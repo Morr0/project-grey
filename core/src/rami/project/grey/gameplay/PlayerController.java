@@ -7,13 +7,11 @@ import rami.project.grey.core.entity.chika.BigChika;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.attachables.weaponery.Weapon;
 import rami.project.grey.core.entity.consumable.attachables.weaponery.WeaponType;
-import rami.project.grey.core.entity.consumable.attachables.weaponery.ammo.Ammo;
 import rami.project.grey.core.entity.consumable.attachables.weaponery.ammo.Bullet;
 import rami.project.grey.core.entity.consumable.loot.Coin;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.GridSubscriber;
 import rami.project.grey.core.gridsystem.Spawner;
-import rami.project.grey.core.item.ItemHolder;
 import rami.project.grey.core.item.ItemInventory;
 import rami.project.grey.ui.screens.PlayerHud;
 import rami.project.grey.ui.screens.ScreenBackground;
@@ -60,7 +58,7 @@ public final class PlayerController implements GridSubscriber {
         this.hud = hud;
         this.player = new Player();
         this.inventory = player.getPlayerInventory();
-        this.bigChika = new BigChika(inventory, player.maxAllowableTowes(), player.maxAllowableAttachments());
+        this.bigChika = new BigChika(inventory, player.maxAllowableStacks(), player.maxAllowableAttachments());
         this.bigChika.addController(this);
 
         this.startingTime = System.currentTimeMillis();

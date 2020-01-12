@@ -1,13 +1,17 @@
 package rami.project.grey.core.entity.chika;
 
+import java.util.Stack;
+
 import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.consumable.attachables.AttachmentStructure;
 import rami.project.grey.core.entity.consumable.attachables.IAttachable;
 import rami.project.grey.core.entity.consumable.attachables.weaponery.Weapon;
+import rami.project.grey.core.entity.stacking.IHoldable;
+import rami.project.grey.core.entity.stacking.IStackable;
 import rami.project.grey.core.item.ItemInventory;
 import rami.project.grey.gameplay.PlayerController;
 
-public class BigChika extends Chika {
+public class BigChika extends Chika implements IStackable {
 
     public PlayerController controller;
 
@@ -16,13 +20,17 @@ public class BigChika extends Chika {
     // Attachments
     public AttachmentStructure attachments;
 
-    public BigChika(ItemInventory inventory, byte maxAllowableTowes, byte maxAllowableAttachments) {
+    public BigChika(ItemInventory inventory, int maxAllowableStack, int maxAllowableAttachments) {
         super(EntitySize.XLARGE);
 
         attachments = new AttachmentStructure();
 
         // KEEP IT CALLED AFTER THE ATTACHMENTS CODE
         updateTotalWeight();
+
+        // Stacking
+        this.stack = new Stack<>();
+        this.stackLimit = maxAllowableStack;
     }
 
     public void addController(PlayerController controller){
@@ -79,6 +87,40 @@ public class BigChika extends Chika {
             }
         }
 
+        if (stack.size() > 0){
+
+        }
+
         return 0;
+    }
+
+    // Stacking
+    private int stackLimit;
+    private Stack<IHoldable> stack;
+
+    @Override
+    public boolean canTow(IHoldable holdable) {
+        if (stack.empty())
+            return true;
+
+        // Checks whether can hold the size and exists a spot
+        return (stack.peek().getSize().number >= holdable.getSize().number) && (stack.size() < stackLimit);
+    }
+
+    @Override
+    public void tow(IHoldable holdable) {
+        stack.push(holdable);
+        holdable.setMasterHolder(this);
+        System.out.println("Stacked");
+    }
+
+    @Override
+    public void release() {
+        stack.peek().setMasterHolder(null);
+        stack.pop();
+    }
+
+    public Stack<IHoldable> getStack() {
+        return stack;
     }
 }
