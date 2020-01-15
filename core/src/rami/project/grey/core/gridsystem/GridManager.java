@@ -2,7 +2,6 @@ package rami.project.grey.core.gridsystem;
 
 import java.util.*;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import rami.project.grey.core.entity.EntityDeathReceiver;
@@ -76,9 +75,9 @@ public final class GridManager implements EntityDeathReceiver {
         while (iterator.hasNext()){
             Grid grid = iterator.next();
             if (grid.currentResider instanceof Chika){
-                { // To prevent removing Chikas that are towed to BigChika
+                { // To prevent removing Chikas that are stacked to BigChika
                     Chika chika = (Chika) grid.currentResider;
-                    if (chika.hasParent)
+                    if (chika.isHeldByStacker())
                         continue;
                 }
             }
@@ -163,13 +162,18 @@ public final class GridManager implements EntityDeathReceiver {
 
         // For WalkedIn event
         if (newPos.currentResider != null){
-            newPos.currentResider.walkedIn(oldPos.currentResider);
+            boolean result = newPos.currentResider.walkedIn(oldPos.currentResider);
+            if (result == IEntity.DISALLOW)
+                return;
         }
 
         // For WalkedInBehind event
         try {
-            if (map[desiredX][desiredY + 1].currentResider != null)
-                map[desiredX][desiredY + 1].currentResider.walkedInBehind(oldPos.currentResider);
+            if (map[desiredX][desiredY + 1].currentResider != null){
+                boolean result = map[desiredX][desiredY + 1].currentResider.walkedInBehind(oldPos.currentResider);
+                if (result == IEntity.DISALLOW)
+                    return;
+            }
         } catch (ArrayIndexOutOfBoundsException ex){}
 
         // The actual moving

@@ -10,6 +10,6 @@ public interface IHoldable {
 
     void setMasterHolder(IStackable parent);
 
-    boolean isStakced();
+    boolean isHeldByStacker();
     IStackable getStacker();
 }

@@ -4,7 +4,9 @@ package rami.project.grey.core.entity.stacking;
  * Represents an IEntity that can hold other entities that are market as IHoldable
  * */
 public interface IStackable {
-    boolean canTow(IHoldable holdable);
-    void tow(IHoldable holdable);
+    boolean isEmpty();
+    boolean canStack(IHoldable holdable);
+    void stack(IHoldable holdable);
+    boolean canRelease();
     void release();
 }

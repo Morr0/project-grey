@@ -29,17 +29,20 @@ public interface IEntity {
      * */
     void touched(IEntity toucher);
 
+    boolean ALLOW = true;
+    boolean DISALLOW = false;
+
     /**
      * Describes an IEntity have moved into a specific grid (i.e. walked on it)
      *
-     * @return if false, the walker cannot walked into the entity
+     * @return ALLOW or DISALLOW
      * */
     boolean walkedIn(IEntity walker);
 
     /**
      * Describes an IEntity walked and is currently behind the called entity
      *
-     * @return if false, the walker cannot walk in behind the entity
+     * @return ALLOW or DISALLOW
      * */
     boolean walkedInBehind(IEntity walker);
 }

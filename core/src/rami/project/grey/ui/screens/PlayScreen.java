@@ -15,7 +15,6 @@ import rami.project.grey.core.entity.consumable.attachables.IAttachable;
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.loot.ILoot;
 import rami.project.grey.core.entity.enemy.Enemy;
-import rami.project.grey.core.entity.stacking.IHoldable;
 import rami.project.grey.core.gridsystem.Grid;
 import rami.project.grey.core.gridsystem.GridManager;
 import rami.project.grey.core.gridsystem.Spawner;
@@ -146,6 +145,10 @@ public class PlayScreen extends BaseScreen {
             case Input.Keys.T:
                 controller.toggleThruster();
                 break;
+            case Input.Keys.R:
+                if (controller.bigChika.canRelease())
+                    controller.bigChika.release();
+                break;
         }
 
         return super.keyDown(keycode);
@@ -196,11 +199,10 @@ public class PlayScreen extends BaseScreen {
         batch.draw(game.res.getCoin(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
     }
 
-    // This relays all attached towes to not be drawn by this but from the parent
     private void drawChika(Chika chika, Vector2 pixels){
         if (chika instanceof BigChika)
             drawBigChika(pixels);
-        else if (!chika.hasParent){
+        else if (!chika.isHeldByStacker()){ // Draws only who have no parents
             EntitySize size = chika.getSize();
             Vector2 dimensions = new Vector2(gCal.gridWidth / size.number, gCal.gridHeight / size.number);
             batch.draw(game.res.getChika1(), pixels.x, pixels.y, dimensions.x, dimensions.y);
@@ -212,13 +214,18 @@ public class PlayScreen extends BaseScreen {
         // Drawing the BigChika first
         batch.draw(game.res.getBigChika(), pixels.x, pixels.y, gCal.gridWidth, gCal.gridHeight);
 
-        if (controller.bigChika.attachments.hasWeapon()){
-            batch.draw(game.res.getGun(), pixels.x + gCal.gridWidth, pixels.y + gCal.gridHeight);
-        }
+//        if (controller.bigChika.attachments.hasWeapon()){
+//            batch.draw(game.res.getGun(), pixels.x + gCal.gridWidth, pixels.y + gCal.gridHeight);
+//        }
 
         // Drawing the stacked ones
+        if (controller.bigChika.getStack().empty())
+            return;
+
         for (int i = 1; i <= controller.bigChika.getStack().size(); i++){
-            batch.draw(game.res.getTowedChika(), pixels.x, pixels.y + (i * gCal.gridHeight));
+            int size = controller.bigChika.getStack().elementAt(i - 1).getSize().number;
+            batch.draw(game.res.getTowedChika(), pixels.x, pixels.y + (i * gCal.gridHeight),
+                    gCal.gridWidth / size, gCal.gridHeight / size);
         }
     }
 }

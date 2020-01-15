@@ -39,7 +39,7 @@ public abstract class Enemy extends LiveableEntity {
 
     @Override
     public boolean walkedInBehind(IEntity walker) {
-        return false;
+        return DISALLOW;
     }
 
     @Override

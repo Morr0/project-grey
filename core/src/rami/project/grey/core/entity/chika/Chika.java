@@ -10,10 +10,9 @@ import rami.project.grey.core.entity.stacking.IStackable;
 // The good entity that the player controls
 public class Chika extends LiveableEntity implements IHoldable {
 
-    protected byte BASE_HEALTH = 4;
+    byte BASE_HEALTH = 4;
 
-    public boolean hasParent = false;
-    IStackable parent = null;
+    private BigChika parent = null;
 
     @Override
     public float getWeight() {
@@ -26,9 +25,9 @@ public class Chika extends LiveableEntity implements IHoldable {
 
     @Override
     public int getDamageDealt() {
-        if (hasParent){
-            return ((BigChika) parent).getDamageDealt();
-        }
+        if (parent != null)
+            return (parent).getDamageDealt();
+
         return size.number;
     }
 
@@ -44,41 +43,49 @@ public class Chika extends LiveableEntity implements IHoldable {
         if (walker instanceof BigChika) {
             BigChika player = (BigChika) walker;
             player.controller.walkedIn(this);
+            return ALLOW;
         }
 
-        return true;
+        return DISALLOW;
     }
 
     @Override
     public boolean walkedInBehind(IEntity walker) {
         // Try to stack if hit by IHoldable
         if (walker instanceof IHoldable){
-            if (((IHoldable) walker).isStakced()){
-                IStackable stackable = ((IHoldable) walker).getStacker();
-                if (stackable.canTow(this))
-                    stackable.tow(this);
+            System.out.println("Chika behind");
+
+            IStackable stackable = ((IHoldable) walker).isHeldByStacker()?
+                    ((IHoldable) walker).getStacker(): null;
+            if (stackable != null){
+                System.out.printf("Chika behind 2");
+                if (stackable.canStack(this))
+                    stackable.stack(this);
             }
         }
 
         // Try to stack if hit by IStackable
         if (walker instanceof IStackable){
             IStackable stackable = (IStackable) walker;
-            if (stackable.canTow(this))
-                stackable.tow(this);
+            // This fixes a bug
+            if (!stackable.isEmpty())
+                return ALLOW;
+
+            if (stackable.canStack(this))
+                stackable.stack(this);
         }
 
-        return true;
+        return ALLOW;
     }
 
     @Override
     public void setMasterHolder(IStackable parent) {
-        hasParent = parent != null;
-        this.parent = parent;
+        this.parent = (BigChika) parent;
     }
 
     @Override
-    public boolean isStakced() {
-        return hasParent;
+    public boolean isHeldByStacker() {
+        return parent != null;
     }
 
     @Override

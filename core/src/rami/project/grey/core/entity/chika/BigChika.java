@@ -99,19 +99,34 @@ public class BigChika extends Chika implements IStackable {
     private Stack<IHoldable> stack;
 
     @Override
-    public boolean canTow(IHoldable holdable) {
+    public boolean isEmpty() {
+        return stack.isEmpty();
+    }
+
+    @Override
+    public boolean canStack(IHoldable holdable) {
         if (stack.empty())
             return true;
 
         // Checks whether can hold the size and exists a spot
-        return (stack.peek().getSize().number >= holdable.getSize().number) && (stack.size() < stackLimit);
+        if (stack.size() < stackLimit){
+            if (stack.peek().getSize().number >= holdable.getSize().number)
+                return true;
+        }
+
+        return false;
     }
 
     @Override
-    public void tow(IHoldable holdable) {
-        stack.push(holdable);
+    public void stack(IHoldable holdable) {
         holdable.setMasterHolder(this);
+        stack.push(holdable);
         System.out.println("Stacked");
+    }
+
+    @Override
+    public boolean canRelease() {
+        return !stack.empty();
     }
 
     @Override
