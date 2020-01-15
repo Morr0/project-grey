@@ -37,7 +37,7 @@ public final class PlayerController implements GridSubscriber {
 
     // MOTION
     // States
-    boolean stopped = false;
+    boolean stopped;
     // The desired speed changes dynamically
     float desiredSpeed;
     float currentSpeed;
@@ -115,12 +115,10 @@ public final class PlayerController implements GridSubscriber {
             gridManager.removeCurrentNonPlayers();
 
         // SPAWNER --- BEGIN ---
-        if (stopped)
-            spawner.stopped();
-        else if (thruster.currentlyThrusting)
-            spawner.thrusting();
+        if (stopped || thruster.currentlyThrusting)
+            spawner.allowSpawning(false);
         else
-            spawner.moving();
+            spawner.allowSpawning(true);
 
         spawner.update();
         // SPAWNER --- END ---
@@ -201,13 +199,6 @@ public final class PlayerController implements GridSubscriber {
     @Override
     public void removedEntity() {
 
-    }
-
-    // NOTIFIER FOR CHANGE OF PLAYER STATE FOR SPAWNER
-    public interface PlayerMotionState{
-        void stopped();
-        void moving();
-        void thrusting();
     }
 
     // BigChika callbacks

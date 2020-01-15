@@ -9,9 +9,8 @@ import rami.project.grey.core.entity.EntitySize;
 import rami.project.grey.core.entity.chika.Chika;
 import rami.project.grey.core.entity.consumable.attachables.thruster.Thruster;
 import rami.project.grey.core.entity.consumable.attachables.thruster.ThrusterType;
-import rami.project.grey.gameplay.PlayerController;
 
-public final class Spawner implements GridSubscriber, PlayerController.PlayerMotionState {
+public final class Spawner implements GridSubscriber {
 
     private GridManager gMan;
     private short maxAllowableSpawns;
@@ -20,67 +19,55 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
     private Random numGen;
 
     // Player position
-    int playerX, playerY;
+    private int playerX, playerY;
 
     // Spawning timings
-    private long lastSpawnedTime = 0; // 0 indicates nothing spawned yet
-    // Primitive cooldown between spawns in milliseconds
-    private static final short BETWEEN_SPAWN_COOLDOWN = 2000;
-    private long nextSpawningChance = spawningThresholdTime;
+    private SpawningTimer timer;
 
     // CURRENT LEVEL TRACKING
-    private boolean allowSpawning = false;
-    // MUST BE MORE THAN THE COOLDOWN
-    private static final short spawningThresholdTime = BETWEEN_SPAWN_COOLDOWN + 1000; // milliseconds
-    private short currentlySpawned = 0;
+    private boolean allowSpawning = true;
+    private short currentlySpawned;
 
     public Spawner(GridManager gMan, short maxAllowableSpawns, int playerX, int playerY) {
         this.gMan = gMan;
         this.gMan.addSubscriber(this);
 
         this.maxAllowableSpawns = maxAllowableSpawns;
+        this.currentlySpawned = 0;
+
         this.playerX = playerX;
         this.playerY = playerY;
 
         // UTIL
         this.numGen = new Random();
+
+        this.timer = new SpawningTimer(numGen,2400);
     }
 
     // To be updated with the update loop
     public void update(){
         if (canSpawn()){
             spawn();
-
-            // KEEP IT LAST
-            // To ensure when the spawning happens no need to continue the loop
-            return;
         }
 
-        // To set whether to spawn or not
-        if ((System.currentTimeMillis() - lastSpawnedTime) >= spawningThresholdTime){
-            allowSpawning = true;
-        }
     }
 
     // Does all the checking to allow for spawning opportunities
     private boolean canSpawn(){
-        if (playerReady){
-            if (System.currentTimeMillis() >= nextSpawningChance){ // Checks if it passed the cooldown
+            // Checks if it passed the cooldown
+            if (System.currentTimeMillis() >= timer.nextSpawningChance()){
                 if (currentlySpawned < maxAllowableSpawns){
-
                     if (allowSpawning){
-                        // Establish the time to spawn
-
+                        System.out.println("ALLOW");
                         return true;
                     }
                 }
             }
-        }
-
         return false;
     }
 
     private void spawn(){
+        System.out.println("Reached 1");
         // Depending on the position of the player the spawning occurs on
         ArrayList<Vector2> locs = getSpawnableLocations();
         if (locs == null) // To postpone the spawning because there is already enough spawned
@@ -94,11 +81,8 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
             }
 
             // Set tracking variables for update loop
-            lastSpawnedTime = System.currentTimeMillis();
-            nextSpawningChance = System.currentTimeMillis() + BETWEEN_SPAWN_COOLDOWN;
-
-            if (allowSpawning)
-                allowSpawning = false;
+            timer.justCompletedSpawningCycle();
+            allowSpawning = !allowSpawning;
         }
     }
 
@@ -140,8 +124,7 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
 
     // Allocates a new spawning time
     private void postponeSpawning(){
-        // Random time to spawn in less than a second
-        nextSpawningChance = System.currentTimeMillis() + numGen.nextInt(1000);
+        timer.postponeNextSpawningCycle();
     }
 
     // SPAWNING WEIGHTS
@@ -212,24 +195,10 @@ public final class Spawner implements GridSubscriber, PlayerController.PlayerMot
         currentlySpawned--;
     }
 
-    // PLAYERCONTROLLER's callbacks
-
-    // To not always spawn but only when PlayerController is fine with spawning
-    private boolean playerReady = true;
-
-    @Override
-    public void stopped() {
-        playerReady = false;
+    // CALLBACKS
+    public void allowSpawning(boolean allowSpawning){
+        this.allowSpawning = allowSpawning;
     }
 
-    @Override
-    public void moving() {
-        playerReady = true;
-    }
 
-    @Override
-    public void thrusting() {
-        playerReady = false;
-        currentlySpawned = 0;
-    }
 }
